@@ -1,0 +1,4 @@
+runtime: nodejs8
+service: music-bridge-data
+includes:
+  - app_env.yaml

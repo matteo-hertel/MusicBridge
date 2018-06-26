@@ -7,6 +7,7 @@ const {
   accessTokenMiddleware,
   auth,
   authCallback,
+  getAuthUrl,
   playlists
 } = require("./handlers/spotify");
 
@@ -16,6 +17,7 @@ app.set("trust proxy", true);
 
 app.get("/", (req, res) => res.send("Hello, World 🎉"));
 app.get("/playlists", [accessTokenMiddleware], playlists);
+app.get("/auth-url", getAuthUrl);
 app.get("/auth", auth);
 app.get("/auth-callback", authCallback);
 

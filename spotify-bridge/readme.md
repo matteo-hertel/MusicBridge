@@ -3,7 +3,7 @@
 Get your playlists from spotify
 
 ### Setup
-For local development make sure you have a `.env` file with the same vars as in `app_env.yaml.example`(and actual values in 😁
+For local development make sure you have a `.env` file with the same vars as in `app_env.yaml.example`(and actual values in 😁)
 
 ```
 npm install

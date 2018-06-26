@@ -10,6 +10,9 @@ const {
 function auth(req, res) {
   return res.redirect(getAuthorizeURL());
 }
+function getAuthUrl(req, res) {
+  return res.json({ url: getAuthorizeURL() });
+}
 async function authCallback(req, res) {
   try {
     const callbackToken = req.query.code;
@@ -17,8 +20,7 @@ async function authCallback(req, res) {
 
     res.json(await getInitalUserInfo());
   } catch (exc) {
-    console.error(exc);
-    res.sendStatus(500);
+    handleErrors(exc, res);
   }
 }
 
@@ -35,14 +37,18 @@ async function playlists(req, res) {
     const playlists = await getAllPlaylists();
     res.json(playlists);
   } catch (exc) {
-    console.error(exc);
-    res.sendStatus(500);
+    handleErrors(exc, res);
   }
 }
-
+function handleErrors(exc, res) {
+  console.error(exc);
+  const errorCode = exc.statusCode || 500;
+  res.status(errorCode).send(exc.message || "");
+}
 module.exports = {
   accessTokenMiddleware,
   auth,
   authCallback,
+  getAuthUrl,
   playlists
 };

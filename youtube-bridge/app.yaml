@@ -1,0 +1,4 @@
+runtime: nodejs8
+service: spotify-bridge
+includes:
+  - app_env.yaml

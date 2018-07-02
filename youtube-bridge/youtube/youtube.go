@@ -11,16 +11,22 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
+type ApiConfig struct {
+	Ctx    context.Context
+	Config *oauth2.Config
+}
+
 func GetAuthURL(config *oauth2.Config) string {
 	return config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
 }
 
-func GetAccessToken(config *oauth2.Config, webToken string) *oauth2.Token {
+func GetAccessToken(config *oauth2.Config, webToken string) (*oauth2.Token, error) {
 	accessToken, err := config.Exchange(oauth2.NoContext, webToken)
 	if err != nil {
-		log.Fatalf("Unable to retrieve token from web %v", err)
+		log.Println("Unable to retrieve token from web %v", err)
+		return nil, err
 	}
-	return accessToken
+	return accessToken, nil
 }
 
 func ChannelsListByUsername(service *youtube.Service, part string, forUsername string) []*youtube.Channel {
@@ -31,25 +37,32 @@ func ChannelsListByUsername(service *youtube.Service, part string, forUsername s
 	return response.Items
 }
 
+func GetApiConfig() (ApiConfig, error) {
+	var apiConfig ApiConfig
+	ctx := context.Background()
+
+	b, err := ioutil.ReadFile("client_secret.json")
+	if err != nil {
+		log.Println("Unable to read client secret file: %v", err)
+		return apiConfig, err
+	}
+
+	config, err := google.ConfigFromJSON(b, youtube.YoutubeReadonlyScope)
+	if err != nil {
+		log.Println("Unable to parse client secret file to config: %v", err)
+		return apiConfig, err
+	}
+
+	apiConfig = ApiConfig{ctx, config}
+
+	return apiConfig, nil
+}
+
 func handleError(err error, message string) {
 	if message == "" {
 		message = "Error making API call"
 	}
 	if err != nil {
-		log.Fatalf(message+": %v", err.Error())
+		log.Println(message+": %v", err.Error())
 	}
-}
-func GetApiConfig() (*oauth2.Config, context.Context) {
-	ctx := context.Background()
-
-	b, err := ioutil.ReadFile("client_secret.json")
-	if err != nil {
-		log.Fatalf("Unable to read client secret file: %v", err)
-	}
-
-	config, err := google.ConfigFromJSON(b, youtube.YoutubeReadonlyScope)
-	if err != nil {
-		log.Fatalf("Unable to parse client secret file to config: %v", err)
-	}
-	return config, ctx
 }

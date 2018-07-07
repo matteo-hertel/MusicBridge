@@ -12,7 +12,8 @@ func main() {
 		fmt.Fprintln(res, "Hello, World 🎉")
 	})
 
-	http.HandleFunc("/auth-url", authUrl)
+	http.HandleFunc("/auth", redirectToAuthUrl)
+	http.HandleFunc("/auth-url", authURL)
 	http.HandleFunc("/auth-callback", authCallback)
 	http.ListenAndServe(fmt.Sprintf(":%v", port), nil)
 }

@@ -1,16 +1,34 @@
 package main
 
 import (
+	"./youtube"
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 
-	"./youtube"
-
 	"google.golang.org/api/youtube/v3"
 )
 
-func authUrl(res http.ResponseWriter, req *http.Request) {
+func authURL(res http.ResponseWriter, req *http.Request) {
+	data := make(map[string]string)
+	config, _ := yt.GetApiConfig()
+	redirectUrl := yt.GetAuthURL(config)
+
+	data["url"] = redirectUrl
+
+	var buf bytes.Buffer
+	err := json.NewEncoder(&buf).Encode(data)
+
+	if err != nil {
+		handleError(err, "Error getting auth Url ")
+	}
+
+	fmt.Fprintln(res, buf.String())
+}
+
+func redirectToAuthUrl(res http.ResponseWriter, req *http.Request) {
 	config, _ := yt.GetApiConfig()
 	redirectUrl := yt.GetAuthURL(config)
 	http.Redirect(res, req, redirectUrl, http.StatusMovedPermanently)

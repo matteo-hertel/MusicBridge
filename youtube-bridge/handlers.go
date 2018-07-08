@@ -13,13 +13,18 @@ import (
 
 func authURL(res http.ResponseWriter, req *http.Request) {
 	data := make(map[string]string)
-	config, _ := yt.GetApiConfig()
-	redirectUrl := yt.GetAuthURL(config)
+	config, err := yt.GetApiConfig()
+
+	if err != nil {
+		handleError(err, "Error getting ApiConfig")
+	}
+
+	redirectUrl := yt.GetAuthURL(config.Config)
 
 	data["url"] = redirectUrl
 
 	var buf bytes.Buffer
-	err := json.NewEncoder(&buf).Encode(data)
+	err = json.NewEncoder(&buf).Encode(data)
 
 	if err != nil {
 		handleError(err, "Error getting auth Url ")
@@ -29,16 +34,25 @@ func authURL(res http.ResponseWriter, req *http.Request) {
 }
 
 func redirectToAuthUrl(res http.ResponseWriter, req *http.Request) {
-	config, _ := yt.GetApiConfig()
-	redirectUrl := yt.GetAuthURL(config)
+	config, err := yt.GetApiConfig()
+	if err != nil {
+		handleError(err, "Error getting ApiConfig")
+	}
+	redirectUrl := yt.GetAuthURL(config.Config)
 	http.Redirect(res, req, redirectUrl, http.StatusMovedPermanently)
 }
 
 func authCallback(res http.ResponseWriter, req *http.Request) {
 	code := req.FormValue("code")
-	config, ctx := yt.GetApiConfig()
-	accessToken := yt.GetAccessToken(config, code)
-	client := config.Client(ctx, accessToken)
+	config, err := yt.GetApiConfig()
+	if err != nil {
+		handleError(err, "Error getting ApiConfig")
+	}
+	accessToken, err := yt.GetAccessToken(config.Config, code)
+	if err != nil {
+		handleError(err, "Error getting accessToken")
+	}
+	client := config.Config.Client(config.Ctx, accessToken)
 
 	service, err := youtube.New(client)
 

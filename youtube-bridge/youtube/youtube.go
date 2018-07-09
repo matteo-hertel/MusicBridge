@@ -37,6 +37,12 @@ func ChannelsListByUsername(service *youtube.Service, part string, forUsername s
 	return response.Items
 }
 
+func GetOauthToken(accessToken string) *oauth2.Token {
+	var token *oauth2.Token
+	token.AccessToken = accessToken
+	return token
+}
+
 func GetApiConfig() (ApiConfig, error) {
 	var apiConfig ApiConfig
 	ctx := context.Background()

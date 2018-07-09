@@ -17,6 +17,7 @@ func main() {
 	http.HandleFunc("/auth", redirectToAuthUrl)
 	http.HandleFunc("/auth-url", authURL)
 	http.HandleFunc("/auth-callback", authCallback)
+	http.HandleFunc("/search", Adapt(search, CheckAccessToken("X-Yotube-Token")))
 	http.ListenAndServe(fmt.Sprintf(":%v", port), nil)
 }
 func Adapt(handler http.Handler, adapters ...Adapter) http.Handler {

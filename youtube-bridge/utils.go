@@ -6,16 +6,15 @@ import (
 )
 
 func CheckAccessToken(token string) Adapter {
-  return func(handler http.Handler) http.Handler {
-    return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-			accessToken := req.Header.Get(token);
-
-	if len(accessToken) == 0 {
-		return 
+	return func(handler http.Handler) http.Handler {
+		return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+			accessToken := req.Header.Get(token)
+			if len(accessToken) == 0 {
+				http.Error(res, http.StatusText(400), 400)
+			}
+			handler.ServeHTTP(res, req)
+		})
 	}
-      handler.ServeHTTP(res,req)
-    }
-  }
 }
 
 func GetEnv(key string, fallback string) string {

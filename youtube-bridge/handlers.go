@@ -4,8 +4,8 @@ import (
 	"./youtube"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"log"
 	"net/http"
 
 	"google.golang.org/api/youtube/v3"
@@ -16,7 +16,8 @@ func authURL(res http.ResponseWriter, req *http.Request) {
 	config, err := yt.GetApiConfig()
 
 	if err != nil {
-		handleError(err, "Error getting ApiConfig")
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+		return
 	}
 
 	redirectUrl := yt.GetAuthURL(config.Config)
@@ -27,7 +28,8 @@ func authURL(res http.ResponseWriter, req *http.Request) {
 	err = json.NewEncoder(&buf).Encode(data)
 
 	if err != nil {
-		handleError(err, "Error getting auth Url ")
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+		return
 	}
 
 	fmt.Fprintln(res, buf.String())
@@ -36,7 +38,8 @@ func authURL(res http.ResponseWriter, req *http.Request) {
 func redirectToAuthUrl(res http.ResponseWriter, req *http.Request) {
 	config, err := yt.GetApiConfig()
 	if err != nil {
-		handleError(err, "Error getting ApiConfig")
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+		return
 	}
 	redirectUrl := yt.GetAuthURL(config.Config)
 	http.Redirect(res, req, redirectUrl, http.StatusMovedPermanently)
@@ -46,19 +49,22 @@ func authCallback(res http.ResponseWriter, req *http.Request) {
 	code := req.FormValue("code")
 	config, err := yt.GetApiConfig()
 	if err != nil {
-		handleError(err, "Error getting ApiConfig")
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+		return
 	}
 
 	accessToken, err := yt.GetAccessToken(config.Config, code)
 	if err != nil {
-		handleError(err, "Error getting accessToken")
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+		return
 	}
 	data := map[string]string{"access_token": accessToken.AccessToken}
 
 	buf, err := toJson(data)
 
 	if err != nil {
-		handleError(err, "Error compressing data")
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+		return
 	}
 
 	fmt.Fprintln(res, buf)
@@ -66,17 +72,25 @@ func authCallback(res http.ResponseWriter, req *http.Request) {
 
 func search(res http.ResponseWriter, req *http.Request) {
 
-	accessToken := req.Header.Get("X-Yutube-Token")
+	accessToken, err := CheckAccessToken(req)
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusBadRequest, err})
+		return
+	}
 	token := yt.GetOauthToken(accessToken)
 	config, err := yt.GetApiConfig()
 
 	if err != nil {
-		handleError(err, "Error getting ApiConfig")
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+		return
 	}
 	client := config.Config.Client(config.Ctx, token)
 
 	service, err := youtube.New(client)
-	handleError(err, "Error creating YouTube client")
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+		return
+	}
 	// Make the API call to YouTube.
 	call := service.Search.List("id,snippet").
 		Q("Amon Amarth - Raise Your Horns").
@@ -84,7 +98,10 @@ func search(res http.ResponseWriter, req *http.Request) {
 		Type("video")
 
 	response, err := call.Do()
-	handleError(err, "")
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+		return
+	}
 
 	videos := make(map[string]string)
 	for _, item := range response.Items {
@@ -97,7 +114,8 @@ func search(res http.ResponseWriter, req *http.Request) {
 	buf, err := toJson(videos)
 
 	if err != nil {
-		handleError(err, "Error compressing data")
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+		return
 	}
 
 	fmt.Fprintln(res, buf)
@@ -115,11 +133,16 @@ func toJson(data map[string]string) (string, error) {
 	return buf.String(), nil
 }
 
-func handleError(err error, message string) {
-	if message == "" {
-		message = "Error making API call"
+func handleHttpError(res http.ResponseWriter, e StatusError) {
+	fmt.Println(e.Error())
+	http.Error(res, e.Error(), e.Status())
+}
+
+func CheckAccessToken(req *http.Request) (string, error) {
+	accessToken := req.Header.Get("X-Youtube-Token")
+	if len(accessToken) == 0 {
+		err := errors.New("Missing or Invalid Token")
+		return "", err
 	}
-	if err != nil {
-		log.Fatalf(message+": %v", err.Error())
-	}
+	return accessToken, nil
 }

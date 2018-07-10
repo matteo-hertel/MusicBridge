@@ -1,6 +1,7 @@
 package yt
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 
@@ -38,8 +39,9 @@ func ChannelsListByUsername(service *youtube.Service, part string, forUsername s
 }
 
 func GetOauthToken(accessToken string) *oauth2.Token {
-	var token *oauth2.Token
-	token.AccessToken = accessToken
+	token := &oauth2.Token{
+		AccessToken: accessToken,
+	}
 	return token
 }
 

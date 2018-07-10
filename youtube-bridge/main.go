@@ -5,8 +5,6 @@ import (
 	"net/http"
 )
 
-type Adapter func(http.Handler) http.Handler
-
 func main() {
 	port := GetEnv("PORT", "3460")
 
@@ -17,12 +15,6 @@ func main() {
 	http.HandleFunc("/auth", redirectToAuthUrl)
 	http.HandleFunc("/auth-url", authURL)
 	http.HandleFunc("/auth-callback", authCallback)
-	http.HandleFunc("/search", Adapt(search, CheckAccessToken("X-Yotube-Token")))
+	http.HandleFunc("/search", search)
 	http.ListenAndServe(fmt.Sprintf(":%v", port), nil)
-}
-func Adapt(handler http.Handler, adapters ...Adapter) http.Handler {
-	for _, adapter := range adapters {
-		handler = adapter(handler)
-	}
-	return handler
 }

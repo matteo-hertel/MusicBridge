@@ -1,7 +1,6 @@
 package yt
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 
@@ -19,23 +18,6 @@ type ApiConfig struct {
 
 func GetAuthURL(config *oauth2.Config) string {
 	return config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
-}
-
-func GetAccessToken(config *oauth2.Config, webToken string) (*oauth2.Token, error) {
-	accessToken, err := config.Exchange(oauth2.NoContext, webToken)
-	if err != nil {
-		log.Println("Unable to retrieve token from web %v", err)
-		return nil, err
-	}
-	return accessToken, nil
-}
-
-func ChannelsListByUsername(service *youtube.Service, part string, forUsername string) []*youtube.Channel {
-	call := service.Channels.List(part)
-	call = call.ForUsername(forUsername)
-	response, err := call.Do()
-	handleError(err, "")
-	return response.Items
 }
 
 func GetOauthToken(accessToken string) *oauth2.Token {
@@ -66,11 +48,24 @@ func GetApiConfig() (ApiConfig, error) {
 	return apiConfig, nil
 }
 
-func handleError(err error, message string) {
-	if message == "" {
-		message = "Error making API call"
-	}
+func GetAccessToken(config *oauth2.Config, webToken string) (*oauth2.Token, error) {
+	accessToken, err := config.Exchange(oauth2.NoContext, webToken)
 	if err != nil {
-		log.Println(message+": %v", err.Error())
+		log.Println("Unable to retrieve token from web %v", err)
+		return nil, err
 	}
+	return accessToken, nil
+}
+
+func ChannelsListByUsername(service *youtube.Service, part string, forUsername string) ([]*youtube.Channel, error) {
+	call := service.Channels.List(part)
+	call = call.ForUsername(forUsername)
+	response, err := call.Do()
+	if err != nil {
+		var yotubeChannel = youtube.Channel{}
+		slice := []*youtube.Channel{&yotubeChannel}
+		log.Println("Unable to get channel info", err)
+		return slice, err
+	}
+	return response.Items, nil
 }

@@ -37,7 +37,7 @@ func GetApiConfig() (ApiConfig, error) {
 		return apiConfig, err
 	}
 
-	config, err := google.ConfigFromJSON(b, youtube.YoutubeReadonlyScope)
+	config, err := google.ConfigFromJSON(b, youtube.YoutubeForceSslScope)
 	if err != nil {
 		log.Println("Unable to parse client secret file to config: %v", err)
 		return apiConfig, err

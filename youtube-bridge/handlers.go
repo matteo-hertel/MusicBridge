@@ -93,15 +93,20 @@ func makePlaylist(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	properties := (map[string]string{"snippet.title": "AutoPlayList",
+	properties := (map[string]string{"snippet.title": "",
 		"snippet.description":     "Wad up?",
 		"snippet.tags[]":          "nailedit",
 		"snippet.defaultLanguage": "",
-		"status.privacyStatus":    "public",
+		"status.privacyStatus":    "papoi",
 	})
 	resource := createResource(properties)
 
-	playlistsInsert(service, "snippet,status", resource)
+	_, err = playlistsInsert(service, "snippet,status", resource)
+
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+		return
+	}
 
 	res.WriteHeader(http.StatusCreated)
 

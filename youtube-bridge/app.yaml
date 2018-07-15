@@ -1,4 +1,5 @@
-runtime: nodejs8
-service: spotify-bridge
-includes:
-  - app_env.yaml
+runtime: go 
+service: yotube-bridge
+handlers:
+- url: /.*
+  script: _go_app

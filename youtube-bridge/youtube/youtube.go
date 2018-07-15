@@ -1,8 +1,10 @@
 package yt
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"log"
+	"strings"
 
 	"golang.org/x/net/context"
 
@@ -55,6 +57,22 @@ func GetAccessToken(config *oauth2.Config, webToken string) (*oauth2.Token, erro
 		return nil, err
 	}
 	return accessToken, nil
+}
+
+func PlaylistsInsert(service *youtube.Service, part string, resources string) (*youtube.Playlist, error) {
+	playlist := &youtube.Playlist{}
+
+	if err := json.NewDecoder(strings.NewReader(resources)).Decode(&playlist); err != nil {
+		return playlist, err
+	}
+
+	call := service.Playlists.Insert(part, playlist)
+	response, err := call.Do()
+	if err != nil {
+		return playlist, err
+	}
+
+	return response, nil
 }
 
 func ChannelsListByUsername(service *youtube.Service, part string, forUsername string) ([]*youtube.Channel, error) {

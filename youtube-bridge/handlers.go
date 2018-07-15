@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strings"
 
 	"google.golang.org/api/youtube/v3"
 )
@@ -78,22 +77,6 @@ func authCallback(res http.ResponseWriter, req *http.Request) {
 	fmt.Fprintln(res, buf)
 }
 
-func playlistsInsert(service *youtube.Service, part string, resources string) (*youtube.Playlist, error) {
-	playlist := &youtube.Playlist{}
-
-	if err := json.NewDecoder(strings.NewReader(resources)).Decode(&playlist); err != nil {
-		return playlist, err
-	}
-
-	call := service.Playlists.Insert(part, playlist)
-	response, err := call.Do()
-	if err != nil {
-		return playlist, err
-	}
-
-	return response, nil
-}
-
 func makePlaylist(res http.ResponseWriter, req *http.Request) {
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
@@ -121,15 +104,21 @@ func makePlaylist(res http.ResponseWriter, req *http.Request) {
 
 	resource := createResource(properties)
 
-	_, err = playlistsInsert(service, "snippet,status", resource)
+	playlist, err := yt.PlaylistsInsert(service, "snippet,status", resource)
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+		return
+	}
+
+	buf, err := toJson(playlist)
+
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return
 	}
 
 	res.WriteHeader(http.StatusCreated)
-
-	fmt.Fprintln(res, http.StatusText(http.StatusCreated))
+	fmt.Fprintln(res, buf)
 }
 
 func search(res http.ResponseWriter, req *http.Request) {

@@ -50,7 +50,7 @@ func createResource(properties map[string]string) string {
 	}
 	return string(propJson)
 }
-func toJson(data map[string]string) (string, error) {
+func toJson(data interface{}) (string, error) {
 
 	var buf bytes.Buffer
 	err := json.NewEncoder(&buf).Encode(data)

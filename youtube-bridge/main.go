@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 	"net/http"
+
+	"google.golang.org/appengine"
 )
 
 func main() {
-	port := GetEnv("PORT", "3460")
-
 	http.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Path != "/" {
 			http.NotFound(res, req)
@@ -22,5 +22,5 @@ func main() {
 	http.HandleFunc("/create-playlist", makePlaylist)
 	http.HandleFunc("/add-to-playlist", addToPlaylist)
 	http.HandleFunc("/search", search)
-	http.ListenAndServe(fmt.Sprintf(":%v", port), nil)
+	appengine.Main()
 }

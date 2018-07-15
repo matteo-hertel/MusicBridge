@@ -6,11 +6,18 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"strings"
 
 	"google.golang.org/api/youtube/v3"
 )
+
+type BridgePlayList struct {
+	Title         string `json:"title"`
+	Description   string `json:"description"`
+	PrivacyStatus string `json:"privacyStatus"`
+}
 
 func authURL(res http.ResponseWriter, req *http.Request) {
 	data := make(map[string]string)
@@ -88,21 +95,33 @@ func playlistsInsert(service *youtube.Service, part string, resources string) (*
 }
 
 func makePlaylist(res http.ResponseWriter, req *http.Request) {
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusBadRequest, err})
+	}
+
+	var data BridgePlayList
+
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+	}
+
 	service, err := makeService(res, req)
 	if err != nil {
 		return
 	}
 
-	properties := (map[string]string{"snippet.title": "",
-		"snippet.description":     "Wad up?",
-		"snippet.tags[]":          "nailedit",
+	properties := (map[string]string{"snippet.title": data.Title,
+		"snippet.description":     data.Description,
+		"snippet.tags[]":          "",
 		"snippet.defaultLanguage": "",
-		"status.privacyStatus":    "papoi",
+		"status.privacyStatus":    data.PrivacyStatus,
 	})
+
 	resource := createResource(properties)
 
 	_, err = playlistsInsert(service, "snippet,status", resource)
-
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return

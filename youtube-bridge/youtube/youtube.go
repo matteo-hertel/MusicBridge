@@ -59,6 +59,22 @@ func GetAccessToken(config *oauth2.Config, webToken string) (*oauth2.Token, erro
 	return accessToken, nil
 }
 
+func PlaylistItemInsert(service *youtube.Service, part string, resources string) (*youtube.PlaylistItem, error) {
+	item := &youtube.PlaylistItem{}
+
+	if err := json.NewDecoder(strings.NewReader(resources)).Decode(&item); err != nil {
+		return item, err
+	}
+
+	call := service.PlaylistItems.Insert(part, item)
+	response, err := call.Do()
+	if err != nil {
+		return item, err
+	}
+
+	return response, nil
+}
+
 func PlaylistsInsert(service *youtube.Service, part string, resources string) (*youtube.Playlist, error) {
 	playlist := &youtube.Playlist{}
 

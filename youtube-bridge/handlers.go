@@ -18,6 +18,12 @@ type BridgePlayList struct {
 	PrivacyStatus string `json:"privacyStatus"`
 }
 
+type BridgePlayListItem struct {
+	PlaylistId string `json:"playlistId"`
+	VideoId    string `json:"videoId"`
+	Position   string `json:"posittion"`
+}
+
 func authURL(res http.ResponseWriter, req *http.Request) {
 	data := make(map[string]string)
 	config, err := yt.GetApiConfig()
@@ -65,9 +71,8 @@ func authCallback(res http.ResponseWriter, req *http.Request) {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return
 	}
-	data := map[string]string{"access_token": accessToken.AccessToken}
 
-	buf, err := toJson(data)
+	buf, err := toJson(accessToken)
 
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
@@ -121,6 +126,47 @@ func makePlaylist(res http.ResponseWriter, req *http.Request) {
 	fmt.Fprintln(res, buf)
 }
 
+func addToPlaylist(res http.ResponseWriter, req *http.Request) {
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusBadRequest, err})
+	}
+
+	var data BridgePlayListItem
+
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+	}
+
+	service, err := makeService(res, req)
+	if err != nil {
+		return
+	}
+
+	properties := (map[string]string{"snippet.playlistId": data.PlaylistId,
+		"snippet.resourceId.kind":    "youtube#video",
+		"snippet.resourceId.videoId": data.VideoId,
+		"snippet.position":           data.Position,
+	})
+	resource := createResource(properties)
+
+	item, err := yt.PlaylistItemInsert(service, "snippet", resource)
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+		return
+	}
+
+	buf, err := toJson(item)
+
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+		return
+	}
+
+	res.WriteHeader(http.StatusCreated)
+	fmt.Fprintln(res, buf)
+}
 func search(res http.ResponseWriter, req *http.Request) {
 	service, err := makeService(res, req)
 

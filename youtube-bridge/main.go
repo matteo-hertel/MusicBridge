@@ -20,6 +20,7 @@ func main() {
 	http.HandleFunc("/auth-url", authURL)
 	http.HandleFunc("/auth-callback", authCallback)
 	http.HandleFunc("/create-playlist", makePlaylist)
+	http.HandleFunc("/add-to-playlist", addToPlaylist)
 	http.HandleFunc("/search", search)
 	http.ListenAndServe(fmt.Sprintf(":%v", port), nil)
 }

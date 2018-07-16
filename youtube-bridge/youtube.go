@@ -1,10 +1,11 @@
-package yt
+package main
 
 import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
 	"strings"
+	"fmt"
 
 	"golang.org/x/net/context"
 
@@ -33,7 +34,8 @@ func GetApiConfig() (ApiConfig, error) {
 	var apiConfig ApiConfig
 	ctx := context.Background()
 
-	b, err := ioutil.ReadFile("client_secret.json")
+	env := GetEnv("ENV", "development")
+	b, err := ioutil.ReadFile(fmt.Sprintf("client_secret.%s.json", env ))
 	if err != nil {
 		log.Println("Unable to read client secret file: %v", err)
 		return apiConfig, err

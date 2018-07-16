@@ -1,7 +1,6 @@
 package main
 
 import (
-	"./youtube"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -26,14 +25,14 @@ type BridgePlayListItem struct {
 
 func authURL(res http.ResponseWriter, req *http.Request) {
 	data := make(map[string]string)
-	config, err := yt.GetApiConfig()
+	config, err := GetApiConfig()
 
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return
 	}
 
-	redirectUrl := yt.GetAuthURL(config.Config)
+	redirectUrl := GetAuthURL(config.Config)
 
 	data["url"] = redirectUrl
 
@@ -49,24 +48,24 @@ func authURL(res http.ResponseWriter, req *http.Request) {
 }
 
 func redirectToAuthUrl(res http.ResponseWriter, req *http.Request) {
-	config, err := yt.GetApiConfig()
+	config, err := GetApiConfig()
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return
 	}
-	redirectUrl := yt.GetAuthURL(config.Config)
+	redirectUrl := GetAuthURL(config.Config)
 	http.Redirect(res, req, redirectUrl, http.StatusTemporaryRedirect)
 }
 
 func authCallback(res http.ResponseWriter, req *http.Request) {
 	code := req.FormValue("code")
-	config, err := yt.GetApiConfig()
+	config, err := GetApiConfig()
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return
 	}
 
-	accessToken, err := yt.GetAccessToken(config.Config, code)
+	accessToken, err := GetAccessToken(config.Config, code)
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return
@@ -109,7 +108,7 @@ func makePlaylist(res http.ResponseWriter, req *http.Request) {
 
 	resource := createResource(properties)
 
-	playlist, err := yt.PlaylistsInsert(service, "snippet,status", resource)
+	playlist, err := PlaylistsInsert(service, "snippet,status", resource)
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return
@@ -151,7 +150,7 @@ func addToPlaylist(res http.ResponseWriter, req *http.Request) {
 	})
 	resource := createResource(properties)
 
-	item, err := yt.PlaylistItemInsert(service, "snippet", resource)
+	item, err := PlaylistItemInsert(service, "snippet", resource)
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return
@@ -210,8 +209,8 @@ func makeService(res http.ResponseWriter, req *http.Request) (*youtube.Service, 
 		handleHttpError(res, StatusError{http.StatusBadRequest, err})
 		return &emptyService, err
 	}
-	token := yt.GetOauthToken(accessToken)
-	config, err := yt.GetApiConfig()
+	token := GetOauthToken(accessToken)
+	config, err := GetApiConfig()
 
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})

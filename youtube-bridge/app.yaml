@@ -1,6 +1,9 @@
 runtime: go 
-service: yotube-bridge
+service: youtube-bridge
 api_version: go1.9
+env_variables:
+  ENV: 'production'
+
 
 handlers:
 - url: /.*

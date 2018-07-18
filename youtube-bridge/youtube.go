@@ -2,20 +2,20 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"strings"
-	"fmt"
-
-	"golang.org/x/net/context"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/youtube/v3"
+	"google.golang.org/appengine"
 )
 
 type ApiConfig struct {
-	Ctx    context.Context
 	Config *oauth2.Config
 }
 
@@ -32,10 +32,9 @@ func GetOauthToken(accessToken string) *oauth2.Token {
 
 func GetApiConfig() (ApiConfig, error) {
 	var apiConfig ApiConfig
-	ctx := context.Background()
 
 	env := GetEnv("ENV", "development")
-	b, err := ioutil.ReadFile(fmt.Sprintf("client_secret.%s.json", env ))
+	b, err := ioutil.ReadFile(fmt.Sprintf("client_secret.%s.json", env))
 	if err != nil {
 		log.Println("Unable to read client secret file: %v", err)
 		return apiConfig, err
@@ -47,7 +46,7 @@ func GetApiConfig() (ApiConfig, error) {
 		return apiConfig, err
 	}
 
-	apiConfig = ApiConfig{ctx, config}
+	apiConfig = ApiConfig{config}
 
 	return apiConfig, nil
 }
@@ -57,6 +56,40 @@ func GetAccessToken(config *oauth2.Config, webToken string) (*oauth2.Token, erro
 	if err != nil {
 		log.Println("Unable to retrieve token from web %v", err)
 		return nil, err
+	}
+	return accessToken, nil
+}
+
+func makeService(res http.ResponseWriter, req *http.Request) (*youtube.Service, error) {
+	var emptyService = youtube.Service{}
+	accessToken, err := CheckAccessToken(req)
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusBadRequest, err})
+		return &emptyService, err
+	}
+	token := GetOauthToken(accessToken)
+	config, err := GetApiConfig()
+
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+		return &emptyService, err
+	}
+	ctx := appengine.NewContext(req)
+	client := config.Config.Client(ctx, token)
+
+	service, err := youtube.New(client)
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+		return &emptyService, err
+	}
+	return service, nil
+}
+
+func CheckAccessToken(req *http.Request) (string, error) {
+	accessToken := req.Header.Get("X-Youtube-Token")
+	if len(accessToken) == 0 {
+		err := errors.New("Missing or Invalid Token")
+		return "", err
 	}
 	return accessToken, nil
 }

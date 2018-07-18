@@ -3,12 +3,9 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-
-	"google.golang.org/api/youtube/v3"
 )
 
 type BridgePlayList struct {
@@ -202,40 +199,7 @@ func search(res http.ResponseWriter, req *http.Request) {
 	fmt.Fprintln(res, buf)
 }
 
-func makeService(res http.ResponseWriter, req *http.Request) (*youtube.Service, error) {
-	var emptyService = youtube.Service{}
-	accessToken, err := CheckAccessToken(req)
-	if err != nil {
-		handleHttpError(res, StatusError{http.StatusBadRequest, err})
-		return &emptyService, err
-	}
-	token := GetOauthToken(accessToken)
-	config, err := GetApiConfig()
-
-	if err != nil {
-		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
-		return &emptyService, err
-	}
-	client := config.Config.Client(config.Ctx, token)
-
-	service, err := youtube.New(client)
-	if err != nil {
-		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
-		return &emptyService, err
-	}
-	return service, nil
-}
-
 func handleHttpError(res http.ResponseWriter, e StatusError) {
 	fmt.Println(e.Error())
 	http.Error(res, e.Error(), e.Status())
-}
-
-func CheckAccessToken(req *http.Request) (string, error) {
-	accessToken := req.Header.Get("X-Youtube-Token")
-	if len(accessToken) == 0 {
-		err := errors.New("Missing or Invalid Token")
-		return "", err
-	}
-	return accessToken, nil
 }

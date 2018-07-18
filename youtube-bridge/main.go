@@ -13,7 +13,7 @@ func main() {
 			http.NotFound(res, req)
 			return
 		}
-		fmt.Fprintln(res, "Hello, World 🎉")
+		fmt.Fprintln(res, fmt.Sprintf("Hello, World 🎉!\nVersion:%s", GetEnv("GAE_VERSION", "developmet")))
 	})
 
 	http.HandleFunc("/auth", redirectToAuthUrl)

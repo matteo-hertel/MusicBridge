@@ -65,18 +65,17 @@ func GetAccessToken(config *oauth2.Config, req *http.Request) (*oauth2.Token, er
 }
 
 func makeService(res http.ResponseWriter, req *http.Request) (*youtube.Service, error) {
-	var emptyService = youtube.Service{}
 	accessToken, err := CheckAccessToken(req)
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusBadRequest, err})
-		return &emptyService, err
+		return nil, err
 	}
 	token := GetOauthToken(accessToken)
 	config, err := GetApiConfig()
 
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
-		return &emptyService, err
+		return nil, err
 	}
 	ctx := appengine.NewContext(req)
 	client := config.Config.Client(ctx, token)
@@ -84,7 +83,7 @@ func makeService(res http.ResponseWriter, req *http.Request) (*youtube.Service, 
 	service, err := youtube.New(client)
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
-		return &emptyService, err
+		return nil, err
 	}
 	return service, nil
 }
@@ -128,17 +127,4 @@ func PlaylistsInsert(service *youtube.Service, part string, resources string) (*
 	}
 
 	return response, nil
-}
-
-func ChannelsListByUsername(service *youtube.Service, part string, forUsername string) ([]*youtube.Channel, error) {
-	call := service.Channels.List(part)
-	call = call.ForUsername(forUsername)
-	response, err := call.Do()
-	if err != nil {
-		var yotubeChannel = youtube.Channel{}
-		slice := []*youtube.Channel{&yotubeChannel}
-		log.Println("Unable to get channel info", err)
-		return slice, err
-	}
-	return response.Items, nil
 }

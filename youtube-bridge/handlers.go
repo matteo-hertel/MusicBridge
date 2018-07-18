@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -33,15 +32,14 @@ func authURL(res http.ResponseWriter, req *http.Request) {
 
 	data["url"] = redirectUrl
 
-	var buf bytes.Buffer
-	err = json.NewEncoder(&buf).Encode(data)
+	buf, err := toJson(data)
 
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return
 	}
 
-	fmt.Fprintln(res, buf.String())
+	fmt.Fprintln(res, buf)
 }
 
 func redirectToAuthUrl(res http.ResponseWriter, req *http.Request) {

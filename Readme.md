@@ -1,4 +1,4 @@
-#MusicBridge
+# MusicBridge
 A collection of microservices to move music from one place to another, the original idea was to move Playlist from Spotify to Youtube, but it can easily be extended to go the other way around and / or add new providers.
 
 ## The original idea

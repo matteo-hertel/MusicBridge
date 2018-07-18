@@ -51,8 +51,12 @@ func GetApiConfig() (ApiConfig, error) {
 	return apiConfig, nil
 }
 
-func GetAccessToken(config *oauth2.Config, webToken string) (*oauth2.Token, error) {
-	accessToken, err := config.Exchange(oauth2.NoContext, webToken)
+func GetAccessToken(config *oauth2.Config, req *http.Request) (*oauth2.Token, error) {
+	code := req.FormValue("code")
+	ctx := appengine.NewContext(req)
+
+	accessToken, err := config.Exchange(ctx, code)
+
 	if err != nil {
 		log.Println("Unable to retrieve token from web %v", err)
 		return nil, err

@@ -55,14 +55,13 @@ func redirectToAuthUrl(res http.ResponseWriter, req *http.Request) {
 }
 
 func authCallback(res http.ResponseWriter, req *http.Request) {
-	code := req.FormValue("code")
 	config, err := GetApiConfig()
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return
 	}
 
-	accessToken, err := GetAccessToken(config.Config, code)
+	accessToken, err := GetAccessToken(config.Config, req)
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return

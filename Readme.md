@@ -8,7 +8,7 @@ When Youtube launched its premium plan I jumped on immediately, ads free youtube
 
 ## Architechture
 A super simple diagram explains how it works
-![diagram](./docs/readme/MusicBridge.svg)
+![diagram](./docs/readme/MusicBridge.png)
 
 ## Roadmap
 Still in heavy development for an MVP the roadmap looks like this:

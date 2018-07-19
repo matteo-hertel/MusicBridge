@@ -171,6 +171,57 @@ func addToPlaylist(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusCreated)
 	fmt.Fprintln(res, buf)
 }
+func tmp(data BridgeSong, ch chan string){
+ ch <- fmt.Sprintf("%s: %s", data.Artist, data.Title);
+}
+
+func bulkeSarch(res http.ResponseWriter, req *http.Request) {
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusBadRequest, err})
+	}
+
+	var data []BridgeSong
+
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+	}
+	ch := make(chan string) 
+	for _, n:=range(data){	
+go tmp(n,ch);
+close(ch);
+	}
+	fmt.Println(ch);
+	return
+//	accessToken, err := CheckAccessToken(req)
+//	token := GetOauthToken(accessToken)
+//	if err != nil {
+//		handleHttpError(res, StatusError{http.StatusUnauthorized, err})
+//		return
+//	}
+//	ctx := appengine.NewContext(req)
+//	service, err := makeService(token, ctx)
+//
+//	if err != nil {
+//		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+//		return
+//	}
+//	items, err := Search(service, &data)
+//	if err != nil {
+//		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+//		return
+//	}
+//
+//	buf, err := toJson(items)
+//
+//	if err != nil {
+//		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+//		return
+//	}
+//
+//	fmt.Fprintln(res, buf)
+}
 
 func search(res http.ResponseWriter, req *http.Request) {
 	body, err := ioutil.ReadAll(req.Body)
@@ -185,6 +236,8 @@ func search(res http.ResponseWriter, req *http.Request) {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 	}
 
+	fmt.Println(data);
+	return
 	accessToken, err := CheckAccessToken(req)
 	token := GetOauthToken(accessToken)
 	if err != nil {

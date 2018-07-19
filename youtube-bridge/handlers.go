@@ -2,9 +2,13 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+
+	"golang.org/x/oauth2"
+	"google.golang.org/appengine"
 )
 
 type BridgePlayList struct {
@@ -20,9 +24,7 @@ type BridgePlayListItem struct {
 }
 
 func authURL(res http.ResponseWriter, req *http.Request) {
-	data := make(map[string]string)
 	config, err := GetApiConfig()
-
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return
@@ -30,15 +32,15 @@ func authURL(res http.ResponseWriter, req *http.Request) {
 
 	redirectUrl := GetAuthURL(config.Config)
 
-	data["url"] = redirectUrl
+	data := map[string]string{
+		"url": redirectUrl,
+	}
 
 	buf, err := toJson(data)
-
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return
 	}
-
 	fmt.Fprintln(res, buf)
 }
 
@@ -86,23 +88,24 @@ func makePlaylist(res http.ResponseWriter, req *http.Request) {
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
-	}
-
-	service, err := makeService(res, req)
-	if err != nil {
 		return
 	}
 
-	properties := (map[string]string{"snippet.title": data.Title,
-		"snippet.description":     data.Description,
-		"snippet.tags[]":          "",
-		"snippet.defaultLanguage": "",
-		"status.privacyStatus":    data.PrivacyStatus,
-	})
+	accessToken, err := CheckAccessToken(req)
+	token := GetOauthToken(accessToken)
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusUnauthorized, err})
+		return
+	}
+	ctx := appengine.NewContext(req)
+	service, err := makeService(token, ctx)
 
-	resource := createResource(properties)
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+		return
+	}
 
-	playlist, err := PlaylistsInsert(service, "snippet,status", resource)
+	playlist, err := PlaylistsInsert(service, &data, "snippet,status")
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return
@@ -131,11 +134,14 @@ func addToPlaylist(res http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 	}
-
-	service, err := makeService(res, req)
+	accessToken, err := CheckAccessToken(req)
+	token := GetOauthToken(accessToken)
 	if err != nil {
+		handleHttpError(res, StatusError{http.StatusUnauthorized, err})
 		return
 	}
+	ctx := appengine.NewContext(req)
+	service, err := makeService(token, ctx)
 
 	properties := (map[string]string{"snippet.playlistId": data.PlaylistId,
 		"snippet.resourceId.kind":    "youtube#video",
@@ -161,9 +167,17 @@ func addToPlaylist(res http.ResponseWriter, req *http.Request) {
 	fmt.Fprintln(res, buf)
 }
 func search(res http.ResponseWriter, req *http.Request) {
-	service, err := makeService(res, req)
+	accessToken, err := CheckAccessToken(req)
+	token := GetOauthToken(accessToken)
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusUnauthorized, err})
+		return
+	}
+	ctx := appengine.NewContext(req)
+	service, err := makeService(token, ctx)
 
 	if err != nil {
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return
 	}
 	// Make the API call to YouTube.
@@ -199,4 +213,31 @@ func search(res http.ResponseWriter, req *http.Request) {
 func handleHttpError(res http.ResponseWriter, e StatusError) {
 	fmt.Println(e.Error())
 	http.Error(res, e.Error(), e.Status())
+}
+
+func GetAccessToken(config *oauth2.Config, req *http.Request) (*oauth2.Token, error) {
+	code := req.FormValue("code")
+	ctx := appengine.NewContext(req)
+
+	accessToken, err := config.Exchange(ctx, code)
+
+	if err != nil {
+		return nil, err
+	}
+	return accessToken, nil
+}
+
+func CheckAccessToken(req *http.Request) (string, error) {
+	accessToken := req.Header.Get("X-Youtube-Token")
+	if len(accessToken) == 0 {
+		err := errors.New("Missing or Invalid Token")
+		return "", err
+	}
+	return accessToken, nil
+}
+func GetOauthToken(accessToken string) *oauth2.Token {
+	token := &oauth2.Token{
+		AccessToken: accessToken,
+	}
+	return token
 }

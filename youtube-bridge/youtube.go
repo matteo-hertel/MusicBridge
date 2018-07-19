@@ -1,18 +1,15 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
-	"net/http"
 	"strings"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/youtube/v3"
-	"google.golang.org/appengine"
 )
 
 type ApiConfig struct {
@@ -23,26 +20,17 @@ func GetAuthURL(config *oauth2.Config) string {
 	return config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
 }
 
-func GetOauthToken(accessToken string) *oauth2.Token {
-	token := &oauth2.Token{
-		AccessToken: accessToken,
-	}
-	return token
-}
-
 func GetApiConfig() (ApiConfig, error) {
 	var apiConfig ApiConfig
 
 	env := GetEnv("ENV", "development")
 	b, err := ioutil.ReadFile(fmt.Sprintf("client_secret.%s.json", env))
 	if err != nil {
-		log.Println("Unable to read client secret file: %v", err)
 		return apiConfig, err
 	}
 
 	config, err := google.ConfigFromJSON(b, youtube.YoutubeForceSslScope)
 	if err != nil {
-		log.Println("Unable to parse client secret file to config: %v", err)
 		return apiConfig, err
 	}
 
@@ -51,50 +39,19 @@ func GetApiConfig() (ApiConfig, error) {
 	return apiConfig, nil
 }
 
-func GetAccessToken(config *oauth2.Config, req *http.Request) (*oauth2.Token, error) {
-	code := req.FormValue("code")
-	ctx := appengine.NewContext(req)
-
-	accessToken, err := config.Exchange(ctx, code)
-
-	if err != nil {
-		log.Println("Unable to retrieve token from web %v", err)
-		return nil, err
-	}
-	return accessToken, nil
-}
-
-func makeService(res http.ResponseWriter, req *http.Request) (*youtube.Service, error) {
-	accessToken, err := CheckAccessToken(req)
-	if err != nil {
-		handleHttpError(res, StatusError{http.StatusBadRequest, err})
-		return nil, err
-	}
-	token := GetOauthToken(accessToken)
+func makeService(token *oauth2.Token, ctx context.Context) (*youtube.Service, error) {
 	config, err := GetApiConfig()
 
 	if err != nil {
-		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return nil, err
 	}
-	ctx := appengine.NewContext(req)
 	client := config.Config.Client(ctx, token)
 
 	service, err := youtube.New(client)
 	if err != nil {
-		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return nil, err
 	}
 	return service, nil
-}
-
-func CheckAccessToken(req *http.Request) (string, error) {
-	accessToken := req.Header.Get("X-Youtube-Token")
-	if len(accessToken) == 0 {
-		err := errors.New("Missing or Invalid Token")
-		return "", err
-	}
-	return accessToken, nil
 }
 
 func PlaylistItemInsert(service *youtube.Service, part string, resources string) (*youtube.PlaylistItem, error) {
@@ -113,8 +70,17 @@ func PlaylistItemInsert(service *youtube.Service, part string, resources string)
 	return response, nil
 }
 
-func PlaylistsInsert(service *youtube.Service, part string, resources string) (*youtube.Playlist, error) {
+func PlaylistsInsert(service *youtube.Service, playlistDefinition *BridgePlayList, part string) (*youtube.Playlist, error) {
 	playlist := &youtube.Playlist{}
+
+	properties := (map[string]string{"snippet.title": playlistDefinition.Title,
+		"snippet.description":     playlistDefinition.Description,
+		"snippet.tags[]":          "",
+		"snippet.defaultLanguage": "",
+		"status.privacyStatus":    playlistDefinition.PrivacyStatus,
+	})
+
+	resources := createResource(properties)
 
 	if err := json.NewDecoder(strings.NewReader(resources)).Decode(&playlist); err != nil {
 		return playlist, err

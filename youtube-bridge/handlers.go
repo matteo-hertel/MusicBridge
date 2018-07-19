@@ -23,6 +23,11 @@ type BridgePlayListItem struct {
 	Position   string `json:"posittion"`
 }
 
+type BridgeSong struct {
+	Artist string `json:"artist"`
+	Title  string `json:"title"`
+}
+
 func authURL(res http.ResponseWriter, req *http.Request) {
 	config, err := GetApiConfig()
 	if err != nil {
@@ -166,7 +171,20 @@ func addToPlaylist(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusCreated)
 	fmt.Fprintln(res, buf)
 }
+
 func search(res http.ResponseWriter, req *http.Request) {
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusBadRequest, err})
+	}
+
+	var data BridgeSong
+
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+	}
+
 	accessToken, err := CheckAccessToken(req)
 	token := GetOauthToken(accessToken)
 	if err != nil {
@@ -180,27 +198,13 @@ func search(res http.ResponseWriter, req *http.Request) {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return
 	}
-	// Make the API call to YouTube.
-	call := service.Search.List("id,snippet").
-		Q("Amon Amarth - Raise Your Horns").
-		VideoCategoryId("10").
-		Type("video")
-
-	response, err := call.Do()
+	items, err := Search(service, &data)
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return
 	}
 
-	videos := make(map[string]string)
-	for _, item := range response.Items {
-		switch item.Id.Kind {
-		case "youtube#video":
-			videos[item.Id.VideoId] = item.Snippet.Title
-		}
-	}
-
-	buf, err := toJson(videos)
+	buf, err := toJson(items)
 
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})

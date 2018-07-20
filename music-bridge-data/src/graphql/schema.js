@@ -1,36 +1,41 @@
-const { makeExecutableSchema } = require("graphql-tools");
-const resolvers = require("./resolvers");
+const {makeExecutableSchema} = require('graphql-tools');
+const resolvers = require('./resolvers');
 
 const typeDefs = `
-type UserInfo{
+type SpotifyUserInfo{
 accessToken: String!,
-display_name: Int
+display_name: String
 }
 
-type Playlist{
+type SpotifyPlaylist{
 id: ID!,
 name: String!,
 owner: String!,
 public: Boolean,
-tracks: [Track]
+tracks: [SpotifyTrack]
 
 }
-type Track{
+type SpotifyTrack{
 name: String!,
 artist: String!
 }
 
-type authUrl{
+type SpotifyAuthUrl{
+url: String!
+}
+type YoutubeAuthUrl{
 url: String!
 }
 
 type Query{
-playlists(accessToken: String!): [Playlist],
-authUrl: authUrl!
-auth(code: String!): UserInfo
+spotifyPlaylists(accessToken: String!): [SpotifyPlaylist],
+spotifyAuthUrl: SpotifyAuthUrl!
+spotifyAuth(code: String!): SpotifyUserInfo
+youtubeAuthUrl: YoutubeAuthUrl!
+youtubeCreatePlaylist(accessToken: String!, title: String!, description: String, privacyStatus: String): String!
 }
 `;
 module.exports = makeExecutableSchema({
   typeDefs,
-  resolvers
+  resolvers,
 });

@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"net/http"
-
 	"golang.org/x/oauth2"
 	"google.golang.org/appengine"
+	"io/ioutil"
+	"net/http"
+	"sync"
+	"time"
 )
 
 type BridgePlayList struct {
@@ -171,11 +172,12 @@ func addToPlaylist(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusCreated)
 	fmt.Fprintln(res, buf)
 }
-func tmp(data BridgeSong, ch chan string){
- ch <- fmt.Sprintf("%s: %s", data.Artist, data.Title);
+func tmp(data BridgeSong, ch chan string) {
+	time.Sleep(time.Second * 3)
+	ch <- fmt.Sprintf("%s: %s", data.Artist, data.Title)
 }
 
-func bulkeSarch(res http.ResponseWriter, req *http.Request) {
+func bulkSarch(res http.ResponseWriter, req *http.Request) {
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusBadRequest, err})
@@ -187,40 +189,62 @@ func bulkeSarch(res http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 	}
-	ch := make(chan string) 
-	for _, n:=range(data){	
-go tmp(n,ch);
-close(ch);
+
+	ch := make(chan string)
+	var wg sync.WaitGroup
+	wg.Add(len(data))
+
+	for _, song := range data {
+		go func(song BridgeSong) {
+			defer wg.Done()
+			tmp(song, ch)
+		}(song)
 	}
-	fmt.Println(ch);
-	return
-//	accessToken, err := CheckAccessToken(req)
-//	token := GetOauthToken(accessToken)
-//	if err != nil {
-//		handleHttpError(res, StatusError{http.StatusUnauthorized, err})
-//		return
-//	}
-//	ctx := appengine.NewContext(req)
-//	service, err := makeService(token, ctx)
-//
-//	if err != nil {
-//		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
-//		return
-//	}
-//	items, err := Search(service, &data)
-//	if err != nil {
-//		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
-//		return
-//	}
-//
-//	buf, err := toJson(items)
-//
-//	if err != nil {
-//		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
-//		return
-//	}
-//
-//	fmt.Fprintln(res, buf)
+
+	response := make([]string, len(data))
+	go func() {
+		for song := range ch {
+			fmt.Println(song)
+			response = append(response, song)
+		}
+	}()
+
+	wg.Wait()
+	buf, err := toJson(response)
+
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+		return
+	}
+
+	fmt.Fprintln(res, buf)
+	//	accessToken, err := CheckAccessToken(req)
+	//	token := GetOauthToken(accessToken)
+	//	if err != nil {
+	//		handleHttpError(res, StatusError{http.StatusUnauthorized, err})
+	//		return
+	//	}
+	//	ctx := appengine.NewContext(req)
+	//	service, err := makeService(token, ctx)
+	//
+	//	if err != nil {
+	//		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+	//		return
+	//	}
+	//	items, err := Search(service, &data)
+	//	if err != nil {
+	//		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+	//		return
+	//	}
+	//
+	//	buf, err := toJson(items)
+	//
+	//	if err != nil {
+	//		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+	//		return
+	//	}
+	//
+	//	fmt.Fprintln(res, buf)
 }
 
 func search(res http.ResponseWriter, req *http.Request) {
@@ -236,7 +260,7 @@ func search(res http.ResponseWriter, req *http.Request) {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 	}
 
-	fmt.Println(data);
+	fmt.Println(data)
 	return
 	accessToken, err := CheckAccessToken(req)
 	token := GetOauthToken(accessToken)

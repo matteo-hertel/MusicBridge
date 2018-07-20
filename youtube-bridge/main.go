@@ -22,5 +22,6 @@ func main() {
 	http.HandleFunc("/create-playlist", makePlaylist)
 	http.HandleFunc("/add-to-playlist", addToPlaylist)
 	http.HandleFunc("/search", search)
+	http.HandleFunc("/bulk-search", bulkSarch)
 	appengine.Main()
 }

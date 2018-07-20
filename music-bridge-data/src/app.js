@@ -1,23 +1,23 @@
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
 }
-const express = require("express");
-const graphqlHTTP = require("express-graphql");
+const express = require('express');
+const graphqlHTTP = require('express-graphql');
 
-const schema = require("./graphql/schema");
+const schema = require('./graphql/schema');
 
 const app = express();
 
-app.set("trust proxy", true);
+app.set('trust proxy', true);
 
-app.get("/", (req, res) => res.send("Hello GraphQL 🎉"));
+app.get('/', (req, res) => res.send('Hello GraphQL 🎉'));
 
 app.use(
-  "/graphql",
+  '/graphql',
   graphqlHTTP({
     graphiql: true,
-    schema
-  })
+    schema,
+  }),
 );
 
 app.listen(process.env.PORT, () => {

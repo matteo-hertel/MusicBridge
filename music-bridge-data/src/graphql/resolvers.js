@@ -3,7 +3,7 @@ const spotifyBridgeUrl = process.env.SPOTIFY_BRIDGE_URL;
 const youtubeBridgeUrl = process.env.YOUTUBE_BRIDGE_URL;
 
 const errorPassThrough = exc => {
-  console.error(exc);
+  //console.error(exc);
   throw exc;
 };
 module.exports = {
@@ -57,7 +57,7 @@ module.exports = {
       info,
     ) => {
       try {
-        const data = await axios.post(
+        const {data} = await axios.post(
           `${youtubeBridgeUrl}/create-playlist`,
           {
             title,
@@ -70,8 +70,32 @@ module.exports = {
             },
           },
         );
-        console.log(data);
-        return JSON.stringify(data);
+        return data;
+      } catch (exc) {
+        errorPassThrough(exc);
+      }
+    },
+    youtubeAddToPlaylist: async (
+      root,
+      {accessToken, playlistId, videoId, position},
+      context,
+      info,
+    ) => {
+      try {
+        const {data} = await axios.post(
+          `${youtubeBridgeUrl}/add-to-playlist`,
+          {
+            playlistId,
+            videoId,
+            position,
+          },
+          {
+            headers: {
+              'X-Youtube-Token': accessToken,
+            },
+          },
+        );
+        return data;
       } catch (exc) {
         errorPassThrough(exc);
       }

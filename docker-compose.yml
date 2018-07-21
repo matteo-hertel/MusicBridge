@@ -1,0 +1,10 @@
+version: '3'
+services:
+  youtube-bridge:
+    build: 
+      context: ./youtube-bridge
+      args:
+         env: $ENV
+         json_config: $JSON_CONFIG 
+    ports:
+      - 3460:8080

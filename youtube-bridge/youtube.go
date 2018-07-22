@@ -95,8 +95,7 @@ func PlaylistsInsert(service *youtube.Service, playlistDefinition *BridgePlayLis
 	return response, nil
 }
 
-func Search(service *youtube.Service, s *BridgeSong) (map[string]string, error) {
-	videos := make(map[string]string)
+func Search(service *youtube.Service, s *BridgeSong) (*youtube.SearchListResponse, error) {
 	call := service.Search.List("id,snippet").
 		Q(fmt.Sprintf("%s - %s", s.Artist, s.Title)).
 		VideoCategoryId("10").
@@ -104,14 +103,8 @@ func Search(service *youtube.Service, s *BridgeSong) (map[string]string, error) 
 
 	response, err := call.Do()
 	if err != nil {
-		return videos, err
+		return nil, err
 	}
 
-	for _, item := range response.Items {
-		switch item.Id.Kind {
-		case "youtube#video":
-			videos[item.Id.VideoId] = item.Snippet.Title
-		}
-	}
-	return videos, nil
+	return response, nil
 }

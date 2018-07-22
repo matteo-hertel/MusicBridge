@@ -9,7 +9,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"sync"
-	"time"
+
+	"google.golang.org/api/youtube/v3"
 )
 
 type BridgePlayList struct {
@@ -172,11 +173,6 @@ func addToPlaylist(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusCreated)
 	fmt.Fprintln(res, buf)
 }
-func tmp(data BridgeSong, ch chan string) {
-	time.Sleep(time.Second * 3)
-	ch <- fmt.Sprintf("%s: %s", data.Artist, data.Title)
-}
-
 func bulkSarch(res http.ResponseWriter, req *http.Request) {
 	accessToken, err := CheckAccessToken(req)
 	token := GetOauthToken(accessToken)
@@ -204,7 +200,9 @@ func bulkSarch(res http.ResponseWriter, req *http.Request) {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return
 	}
-	ch := make(chan map[string]string)
+
+	ch := make(chan *youtube.SearchListResponse)
+
 	var wg sync.WaitGroup
 	wg.Add(len(data))
 
@@ -212,18 +210,17 @@ func bulkSarch(res http.ResponseWriter, req *http.Request) {
 		go func(song BridgeSong) {
 			defer wg.Done()
 			items, err := Search(service, &song)
-
 			if err != nil {
+				fmt.Println(err)
 				return
 			}
 			ch <- items
 		}(song)
 	}
 
-	response := make([]map[string]string, len(data))
+	response := []*youtube.SearchListResponse{}
 	go func() {
 		for song := range ch {
-			fmt.Println(song)
 			response = append(response, song)
 		}
 	}()
@@ -237,33 +234,6 @@ func bulkSarch(res http.ResponseWriter, req *http.Request) {
 	}
 
 	fmt.Fprintln(res, buf)
-	//	accessToken, err := CheckAccessToken(req)
-	//	token := GetOauthToken(accessToken)
-	//	if err != nil {
-	//		handleHttpError(res, StatusError{http.StatusUnauthorized, err})
-	//		return
-	//	}
-	//	ctx := appengine.NewContext(req)
-	//	service, err := makeService(token, ctx)
-	//
-	//	if err != nil {
-	//		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
-	//		return
-	//	}
-	//	items, err := Search(service, &data)
-	//	if err != nil {
-	//		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
-	//		return
-	//	}
-	//
-	//	buf, err := toJson(items)
-	//
-	//	if err != nil {
-	//		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
-	//		return
-	//	}
-	//
-	//	fmt.Fprintln(res, buf)
 }
 
 func search(res http.ResponseWriter, req *http.Request) {

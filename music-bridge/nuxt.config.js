@@ -7,7 +7,7 @@ module.exports = {
     meta: [
       { charset: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { hid: "description", name: "description", content: "It talks to Humans" }
+      { hid: "description", name: "description", content: "Convert Spotify playlists into YouTube Music playlists" }
     ],
     link: [
       { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
@@ -27,7 +27,7 @@ module.exports = {
   /*
   ** Customize the progress bar color
   */
-  loading: { color: "#3B8070" },
+  loading: false,
   /*
   ** Build configuration
   */

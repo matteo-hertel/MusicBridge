@@ -17,6 +17,20 @@ services:
     environment:
     - PORT=3450
     - YOUTUBE_BRIDGE_URL=http://youtube-bridge:8080
-    - SPOTIFY_BRIDGE_URL=
+    - SPOTIFY_BRIDGE_URL=http://spotify-bridge:3456
     ports:
       - 3450:3450
+
+  spotify-bridge:
+    build: 
+      context: ./spotify-bridge
+      args:
+         env: $ENV
+    environment:
+    - PORT=3456
+    - CLIENT_ID=$SPOTIFY_CLIENT_ID
+    - CLIENT_SECRET=$SPOTIFY_CLIENT_SECRET
+    - REDIRECT_URI=$SPOTIFY_REDIRECT_URI
+
+    ports:
+      - 3456:3456

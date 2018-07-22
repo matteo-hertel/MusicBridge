@@ -178,6 +178,13 @@ func tmp(data BridgeSong, ch chan string) {
 }
 
 func bulkSarch(res http.ResponseWriter, req *http.Request) {
+	accessToken, err := CheckAccessToken(req)
+	token := GetOauthToken(accessToken)
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusUnauthorized, err})
+		return
+	}
+
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusBadRequest, err})
@@ -190,18 +197,30 @@ func bulkSarch(res http.ResponseWriter, req *http.Request) {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 	}
 
-	ch := make(chan string)
+	ctx := appengine.NewContext(req)
+	service, err := makeService(token, ctx)
+
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+		return
+	}
+	ch := make(chan map[string]string)
 	var wg sync.WaitGroup
 	wg.Add(len(data))
 
 	for _, song := range data {
 		go func(song BridgeSong) {
 			defer wg.Done()
-			tmp(song, ch)
+			items, err := Search(service, &song)
+
+			if err != nil {
+				return
+			}
+			ch <- items
 		}(song)
 	}
 
-	response := make([]string, len(data))
+	response := make([]map[string]string, len(data))
 	go func() {
 		for song := range ch {
 			fmt.Println(song)

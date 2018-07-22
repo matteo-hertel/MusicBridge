@@ -8,3 +8,15 @@ services:
          json_config: $JSON_CONFIG 
     ports:
       - 3460:8080
+
+  music-bridge-data:
+    build: 
+      context: ./music-bridge-data
+      args:
+         env: $ENV
+    environment:
+    - PORT=3450
+    - YOUTUBE_BRIDGE_URL=http://youtube-bridge:8080
+    - SPOTIFY_BRIDGE_URL=
+    ports:
+      - 3450:3450

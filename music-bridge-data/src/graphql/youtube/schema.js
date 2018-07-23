@@ -1,8 +1,8 @@
 const typeDefs = `
 type YoutubePlaylistSnippet{
   channelId: String,
-channelTitle: String,
-title: String!
+  channelTitle: String,
+  title: String!
 }
 
 type YoutubePlaylistStatus{
@@ -19,7 +19,6 @@ type YoutubeCreatePlaylist{
 type AuthUrl{
   url: String!
 }
-
 type YoutubeVideoSnippet{
   title: String!
 }
@@ -29,6 +28,13 @@ type YoutubeVideo{
   snippet: YoutubeVideoSnippet!
 }
 
+input YoutubeSearchSongs{
+  songs: SpotifyTrack
+}
+
+type Mutation {
+  youtubeSearchSongs(accessToken: String!, input: YoutubeSearchSongs ): String!
+}
 `;
 const queryDefs = `
   youtubeAuthUrl: AuthUrl!

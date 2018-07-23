@@ -12,8 +12,12 @@ module.exports = makeExecutableSchema({
   typeDefs: [spotify.schema.typeDefs, youtube.schema.typeDefs, queryDefs],
   resolvers: {
     Query: {
-      ...spotify.resolvers,
-      ...youtube.resolvers,
+      ...spotify.resolvers.Query,
+      ...youtube.resolvers.Query,
+    },
+    Mutation: {
+      ...spotify.resolvers.Mutation,
+      ...youtube.resolvers.Mutation,
     },
   },
 });

@@ -6,38 +6,41 @@ const errorPassThrough = exc => {
   throw exc;
 };
 module.exports = {
-  spotifyAuthUrl: async (root, _, context, info) => {
-    try {
-      const {data: url} = await axios.get(`${spotifyBridgeUrl}/auth-url`);
-      return url;
-    } catch (exc) {
-      errorPassThrough(exc);
-    }
-  },
-  spotifyAuth: async (root, {code}, context, info) => {
-    try {
-      const {data: userInfo} = await axios.get(
-        `${spotifyBridgeUrl}/auth-callback?code=${code}`,
-      );
-      return userInfo;
-    } catch (exc) {
-      errorPassThrough(exc);
-    }
-  },
+  Query: {
+    spotifyAuthUrl: async (root, _, context, info) => {
+      try {
+        const {data: url} = await axios.get(`${spotifyBridgeUrl}/auth-url`);
+        return url;
+      } catch (exc) {
+        errorPassThrough(exc);
+      }
+    },
+    spotifyAuth: async (root, {code}, context, info) => {
+      try {
+        const {data: userInfo} = await axios.get(
+          `${spotifyBridgeUrl}/auth-callback?code=${code}`,
+        );
+        return userInfo;
+      } catch (exc) {
+        errorPassThrough(exc);
+      }
+    },
 
-  spotifyPlaylists: async (root, {accessToken}, context, info) => {
-    try {
-      const {data: playlists} = await axios.get(
-        `${spotifyBridgeUrl}/playlists`,
-        {
-          headers: {
-            'X-Spotify-Token': accessToken,
+    spotifyPlaylists: async (root, {accessToken}, context, info) => {
+      try {
+        const {data: playlists} = await axios.get(
+          `${spotifyBridgeUrl}/playlists`,
+          {
+            headers: {
+              'X-Spotify-Token': accessToken,
+            },
           },
-        },
-      );
-      return playlists;
-    } catch (exc) {
-      errorPassThrough(exc);
-    }
+        );
+        return playlists;
+      } catch (exc) {
+        errorPassThrough(exc);
+      }
+    },
   },
+  Mutation: {},
 };

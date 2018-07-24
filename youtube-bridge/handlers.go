@@ -173,6 +173,7 @@ func addToPlaylist(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusCreated)
 	fmt.Fprintln(res, buf)
 }
+
 func bulkSarch(res http.ResponseWriter, req *http.Request) {
 	accessToken, err := CheckAccessToken(req)
 	token := GetOauthToken(accessToken)
@@ -201,7 +202,7 @@ func bulkSarch(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	ch := make(chan *youtube.SearchListResponse)
+	response := []*youtube.SearchListResponse{}
 
 	var wg sync.WaitGroup
 	wg.Add(len(data))
@@ -214,16 +215,9 @@ func bulkSarch(res http.ResponseWriter, req *http.Request) {
 				fmt.Println(err)
 				return
 			}
-			ch <- items
+			response = append(response, items)
 		}(song)
 	}
-
-	response := []*youtube.SearchListResponse{}
-	go func() {
-		for song := range ch {
-			response = append(response, song)
-		}
-	}()
 
 	wg.Wait()
 	buf, err := toJson(response)

@@ -28,12 +28,22 @@ type YoutubeVideo{
   snippet: YoutubeVideoSnippet!
 }
 
-input YoutubeSearchSongs{
-  songs: SpotifyTrack
+type YoutubeSearchResultWrapper{
+results: [YoutubeSearchResult],
+}
+
+type YoutubeSearchResult{
+videoId: String,
+description: String,
+title: String
+}
+input YoutubeSongInput{
+  artist: String!,
+  title: String!
 }
 
 type Mutation {
-  youtubeSearchSongs(accessToken: String!, input: YoutubeSearchSongs ): String!
+  youtubeSearchSongs(accessToken: String!, songs: [YoutubeSongInput]): [YoutubeSearchResultWrapper]
 }
 `;
 const queryDefs = `

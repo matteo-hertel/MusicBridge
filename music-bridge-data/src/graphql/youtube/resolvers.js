@@ -5,6 +5,7 @@ const errorPassThrough = exc => {
   //console.error(exc);
   throw exc;
 };
+
 module.exports = {
   Query: {
     youtubeAuthUrl: async (root, _, context, info) => {
@@ -70,18 +71,30 @@ module.exports = {
     youtubeSearchSongs: async (root, {accessToken, songs}, context, info) => {
       try {
         const {data} = await axios.post(
-          `${youtubeBridgeUrl}/add-to-playlist`,
-          [...songs],
+          `${youtubeBridgeUrl}/bulk-search`,
+          songs,
           {
             headers: {
               'X-Youtube-Token': accessToken,
             },
           },
         );
-        return data;
+        return data.map(mapToProp('items', extractSongInfo));
       } catch (exc) {
         errorPassThrough(exc);
       }
     },
   },
 };
+function extractSongInfo(song) {
+  const {
+    id: {videoId},
+    snippet: {description, title},
+  } = song;
+  return {videoId, description, title};
+}
+function mapToProp(prop, fn) {
+  return function map(obj) {
+    return {results: obj[prop].map(fn)};
+  };
+}

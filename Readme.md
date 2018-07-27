@@ -13,7 +13,7 @@ A super simple diagram explains how it works:
 ## Roadmap
 Still in heavy development for an MVP the roadmap looks like this:
 - [x] Spotify Bridge
-- [ ] Youtube Bridge
+- [x] Youtube Bridge
 - [x] GraphQL layer
 - [ ] Vue FrontEnd
 

@@ -8,6 +8,7 @@
       <h2 class="subtitle">
         It talks to Humans
       </h2>
+<Todo />
       <div class="links">
         <a
           href="https://nuxtjs.org/"
@@ -24,9 +25,11 @@
 
 <script>
 import AppLogo from "~/components/AppLogo.vue";
+import Todo from "~/components/Todo.vue";
 
 export default {
   components: {
+    Todo,
     AppLogo
   }
 };

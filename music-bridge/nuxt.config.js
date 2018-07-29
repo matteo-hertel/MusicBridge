@@ -31,7 +31,22 @@ module.exports = {
   /*
   ** Build configuration
   */
-  modules: [["bootstrap-vue/nuxt", { css: false }]],
+  modules: [["bootstrap-vue/nuxt", { css: false }], "@nuxtjs/apollo"],
+  apollo: {
+    clientConfigs: {
+      default: {
+        httpEndpoint: "http://localhost:3450/graphql",
+        wsEndpoint: null,
+        // LocalStorage token
+        tokenName: "apollo-token", // optional
+        // Enable Automatic Query persisting with Apollo Engine
+        persisting: false, // Optional
+        // Use websockets for everything (no HTTP)
+        // You need to pass a `wsEndpoint` for this to work
+        websocketsOnly: false // Optional
+      }
+    }
+  },
   build: {
     /*
     ** Run ESLint on save

@@ -4,7 +4,6 @@
   "version": "1.0.0",
   "description": "Move your playlists from one music provider to another 🤘",
   "author": "Rob Strover <robstrover@gmail.com>",
-  "private": true,
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",
@@ -14,6 +13,7 @@
     "precommit": "npm run lint"
   },
   "dependencies": {
+    "@nuxtjs/apollo": "^4.0.0-rc1",
     "bootstrap-vue": "^2.0.0-rc.11",
     "nuxt": "^1.0.0"
   },

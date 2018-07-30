@@ -31,6 +31,7 @@ module.exports = {
   /*
   ** Build configuration
   */
+  plugins: [{ src: "~/plugins/localStorage.js", ssr: false }],
   modules: [["bootstrap-vue/nuxt", { css: false }], "@nuxtjs/apollo"],
   apollo: {
     clientConfigs: {
@@ -48,6 +49,7 @@ module.exports = {
     }
   },
   build: {
+    vendor: ["vuex-persistedstate"],
     /*
     ** Run ESLint on save
     */

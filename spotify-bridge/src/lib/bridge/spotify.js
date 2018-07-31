@@ -3,11 +3,7 @@ const SpotifyWebApi = require('spotify-web-api-node');
 
 const scopes = ['user-read-private', 'user-read-email'];
 
-const spotifyApi = new SpotifyWebApi({
-  clientId: process.env.CLIENT_ID,
-  clientSecret: process.env.CLIENT_SECRET,
-  redirectUri: process.env.REDIRECT_URI,
-});
+const spotifyApi = makeSpotifyApi();
 
 async function getAllPlaylists() {
   async function enrichData(playlist) {
@@ -23,6 +19,7 @@ function setAccessToken(accessToken) {
 }
 
 function getAuthorizeURL(customRedirect) {
+  const spotifyApi = makeSpotifyApi();
   if (customRedirect) spotifyApi.setRedirectURI(customRedirect);
   return spotifyApi.createAuthorizeURL(scopes);
 }
@@ -62,6 +59,13 @@ function getPlaylistTracks(user, id) {
     }));
   }
   return spotifyApi.getPlaylist(user, id).then(processPlaylistData);
+}
+function makeSpotifyApi() {
+  return new SpotifyWebApi({
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+    redirectUri: process.env.REDIRECT_URI,
+  });
 }
 module.exports = {
   getAllPlaylists,

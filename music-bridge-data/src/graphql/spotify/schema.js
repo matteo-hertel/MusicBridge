@@ -19,7 +19,7 @@ type SpotifyTrack{
 
 const queryDefs = `
   spotifyPlaylists(accessToken: String!): [SpotifyPlaylist],
-  spotifyAuthUrl: AuthUrl!
+  spotifyAuthUrl(redirect: String): AuthUrl!
   spotifyAuth(code: String!): SpotifyUserInfo
 `;
 module.exports = {

@@ -7,9 +7,11 @@ const errorPassThrough = exc => {
 };
 module.exports = {
   Query: {
-    spotifyAuthUrl: async (root, _, context, info) => {
+    spotifyAuthUrl: async (root, {redirect}, context, info) => {
       try {
-        const {data: url} = await axios.get(`${spotifyBridgeUrl}/auth-url`);
+        const {data: url} = await axios.post(`${spotifyBridgeUrl}/auth-url`, {
+          redirect,
+        });
         return url;
       } catch (exc) {
         errorPassThrough(exc);

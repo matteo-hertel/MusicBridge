@@ -52,7 +52,9 @@ func authURL(res http.ResponseWriter, req *http.Request) {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return
 	}
-	config.Config.RedirectURL = payload.Redirect
+	if payload.Redirect != "" {
+		config.Config.RedirectURL = payload.Redirect
+	}
 	redirectUrl := GetAuthURL(config.Config)
 
 	data := map[string]string{

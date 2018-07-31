@@ -8,9 +8,11 @@ const errorPassThrough = exc => {
 
 module.exports = {
   Query: {
-    youtubeAuthUrl: async (root, _, context, info) => {
+    youtubeAuthUrl: async (root, {redirect}, context, info) => {
       try {
-        const {data: url} = await axios.get(`${youtubeBridgeUrl}/auth-url`);
+        const {data: url} = await axios.post(`${youtubeBridgeUrl}/auth-url`, {
+          redirect,
+        });
         return url;
       } catch (exc) {
         errorPassThrough(exc);

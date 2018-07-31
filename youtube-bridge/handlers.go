@@ -29,14 +29,30 @@ type BridgeSong struct {
 	Artist string `json:"artist"`
 	Title  string `json:"title"`
 }
+type BridgeAuthUrl struct {
+	Redirect string `json:"redirect"`
+}
 
 func authURL(res http.ResponseWriter, req *http.Request) {
-	config, err := GetApiConfig()
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusBadRequest, err})
+	}
+
+	var payload BridgeAuthUrl
+
+	err = json.Unmarshal(body, &payload)
 	if err != nil {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 		return
 	}
 
+	config, err := GetApiConfig()
+	if err != nil {
+		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
+		return
+	}
+	config.Config.RedirectURL = payload.Redirect
 	redirectUrl := GetAuthURL(config.Config)
 
 	data := map[string]string{

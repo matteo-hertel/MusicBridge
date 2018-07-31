@@ -15,6 +15,7 @@
     "nodemon": "^1.17.5"
   },
   "dependencies": {
+    "body-parser": "^1.18.3",
     "express": "^4.16.3",
     "lodash": "^4.17.10",
     "spotify-web-api-node": "^3.1.1"

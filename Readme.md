@@ -17,7 +17,8 @@ Still in heavy development for an MVP the roadmap looks like this:
 - [x] GraphQL layer
 - [ ] Vue FrontEnd
     - [ ] Pretty app by Rob Strover
-    - [ ] Vuex + Apollo persistance
+    - [ ] Vuex 
+    - [ ] Apollo
 
 # Infx
 Excluding various different secrets, API keys and  config, all the microservices will be deployable on Google App Engine with a simple command, so anybody can run its own copy of the whole thing CI can be configured for autodeploy but it's not fun so it'll be one of the last things on the list.

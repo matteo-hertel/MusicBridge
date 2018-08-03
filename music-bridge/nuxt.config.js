@@ -31,7 +31,10 @@ module.exports = {
   /*
   ** Build configuration
   */
-  plugins: [{ src: "~/plugins/localStorage.js", ssr: false }],
+  plugins: [
+      { src: "~/plugins/localStorage.js", ssr: false },
+      { src: "~/plugins/storeInit.js", ssr: false }
+      ],
   modules: [["bootstrap-vue/nuxt", { css: false }], "@nuxtjs/apollo"],
   apollo: {
     clientConfigs: {

@@ -4,7 +4,7 @@
             <div class="col">
                 <div class="row">
                     <div class="col">
-                        <h1 class="text-center">Spotify</h1>
+                        <h1 class="text-center"><span class="spotify-pulse spotify-text">Spotify</span></h1>
                     </div>
                 </div>
                 <div class="row">

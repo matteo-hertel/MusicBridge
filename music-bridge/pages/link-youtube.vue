@@ -4,16 +4,14 @@
             <div class="col">
                 <div class="row">
                     <div class="col">
-                        <h1 class="text-center">YouTube</h1>
+                        <h1 class="text-center"><span class="youtube-pulse youtube-text">YouTube</span></h1>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
                         <p class="text-center lead">Next, let's log in to your YouTube account.</p>
                         <p class="text-center">
-                            <nuxt-link to="" class="btn btn-primary btn-lg">
-                                Log in to YouTube
-                            </nuxt-link>
+                            <YoutubeLoginButton />
                             <nuxt-link to="select-playlist" class="btn btn-primary btn-lg">
                                 Next
                             </nuxt-link>
@@ -26,13 +24,13 @@
 </template>
 
 <script>
-    // import AppLogo from "~/components/AppLogo.vue";
+    import YoutubeLoginButton from "~/components/YoutubeLoginButton.vue";
 
-    // export default {
-    //   components: {
-    //     AppLogo
-    //   }
-    // };
+    export default {
+      components: {
+        YoutubeLoginButton,
+      }
+    };
 </script>
 
 <style>

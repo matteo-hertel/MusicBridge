@@ -9,7 +9,6 @@
         </div>
         <div class="row">
         <div class="col">
-          <Todo />
           <p class="text-center lead">Spotify playlists to YouTube Music - The fast way.</p>
           <p class="text-center">
             Music Bridge stores none of you data. We use short duration tokens to access your accounts.<br/>
@@ -28,15 +27,11 @@
 </template>
 
 <script>
-<<<<<<< HEAD
-import Todo from "~/components/Todo.vue";
 
 export default {
   components: {
-    Todo,
   }
 };
-=======
 // import AppLogo from "~/components/AppLogo.vue";
 
 // export default {
@@ -44,7 +39,6 @@ export default {
 //     AppLogo
 //   }
 // };
->>>>>>> 402b6fa... [MB] get started with interface
 </script>
 
 <style>

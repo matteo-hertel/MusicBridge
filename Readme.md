@@ -17,7 +17,7 @@ Still in heavy development for an MVP the roadmap looks like this:
 - [x] GraphQL layer
 - [ ] Vue FrontEnd
     - [ ] Pretty app by Rob Strover
-    - [ ] Vuex 
+    - [x] Vuex 
     - [ ] Apollo
 
 # Infx

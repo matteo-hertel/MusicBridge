@@ -1,4 +1,8 @@
 const typeDefs = `
+type YoutubeUserInfo{
+  accessToken: String!
+}
+
 type YoutubePlaylistSnippet{
   channelId: String,
   channelTitle: String,
@@ -48,6 +52,7 @@ type Mutation {
 `;
 const queryDefs = `
   youtubeAuthUrl(redirect: String): AuthUrl!
+  youtubeAuth(code: String!): YoutubeUserInfo
   youtubeCreatePlaylist(accessToken: String!, title: String!, description: String, privacyStatus: String): YoutubeCreatePlaylist!
   youtubeAddToPlaylist(accessToken: String!, playlistId: String!, videoId: String!, position: String ): YoutubeVideo!
 `;

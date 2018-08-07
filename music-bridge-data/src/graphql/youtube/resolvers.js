@@ -18,6 +18,16 @@ module.exports = {
         errorPassThrough(exc);
       }
     },
+    youtubeAuth: async (root, {code}, context, info) => {
+      try {
+        const {data} = await axios.get(
+          `${youtubeBridgeUrl}/auth-callback?code=${code}`,
+        );
+        return data;
+      } catch (exc) {
+        errorPassThrough(exc);
+      }
+    },
     youtubeCreatePlaylist: async (
       root,
       {accessToken, title, description, privacyStatus},

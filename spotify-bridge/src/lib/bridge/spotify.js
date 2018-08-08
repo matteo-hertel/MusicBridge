@@ -28,6 +28,7 @@ function spotifyApiProvider(spotifyApi) {
     };
   }
   async function getApiToken(CALLBACK_TOKEN) {
+    console.log(spotifyApi);
     const auth = await spotifyApi.authorizationCodeGrant(CALLBACK_TOKEN);
     spotifyApi.setAccessToken(auth.body['access_token']);
     spotifyApi.setRefreshToken(auth.body['refresh_token']);

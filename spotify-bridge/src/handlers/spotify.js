@@ -55,12 +55,12 @@ function withCustomRedirect(req, res, next) {
 }
 
 async function accessTokenMiddleware(req, res, next) {
-  const {setaccesstoken} = req.apiprovider;
-  const apitoken = req.get('x-spotify-token');
-  if (!apitoken) {
+  const {setAccessToken} = req.apiProvider;
+  const apiToken = req.get('X-Spotify-Token');
+  if (!apiToken) {
     return res.sendstatus('401');
   }
-  setaccesstoken(apitoken);
+  setAccessToken(apiToken);
   next();
 }
 

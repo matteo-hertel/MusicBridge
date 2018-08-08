@@ -17,10 +17,13 @@ module.exports = {
         errorPassThrough(exc);
       }
     },
-    spotifyAuth: async (root, {code}, context, info) => {
+    spotifyAuth: async (root, {code, redirect}, context, info) => {
       try {
         const {data: userInfo} = await axios.get(
-          `${spotifyBridgeUrl}/auth-callback?code=${code}`,
+          `${spotifyBridgeUrl}/auth-callback?code=${code}&redirect=${redirect}`,
+          {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
         );
         return userInfo;
       } catch (exc) {

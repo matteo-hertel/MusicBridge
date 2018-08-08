@@ -18,12 +18,16 @@ module.exports = {
         errorPassThrough(exc);
       }
     },
-    youtubeAuth: async (root, {code}, context, info) => {
+    youtubeAuth: async (root, {code, redirect}, context, info) => {
       try {
-        const {data} = await axios.get(
-          `${youtubeBridgeUrl}/auth-callback?code=${code}`,
+        const {
+          data: {access_token, expiry},
+        } = await axios.get(
+          `${youtubeBridgeUrl}/auth-callback?code=${code}&redirect=${
+            redirect ? redirect : ''
+          }`,
         );
-        return data;
+        return {accessToken: access_token, expiry};
       } catch (exc) {
         errorPassThrough(exc);
       }

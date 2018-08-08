@@ -52,7 +52,7 @@ type Mutation {
 `;
 const queryDefs = `
   youtubeAuthUrl(redirect: String): AuthUrl!
-  youtubeAuth(code: String!): YoutubeUserInfo
+  youtubeAuth(code: String!, redirect: String): YoutubeUserInfo
   youtubeCreatePlaylist(accessToken: String!, title: String!, description: String, privacyStatus: String): YoutubeCreatePlaylist!
   youtubeAddToPlaylist(accessToken: String!, playlistId: String!, videoId: String!, position: String ): YoutubeVideo!
 `;

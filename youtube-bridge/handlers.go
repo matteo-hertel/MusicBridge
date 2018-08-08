@@ -261,7 +261,6 @@ func search(res http.ResponseWriter, req *http.Request) {
 		handleHttpError(res, StatusError{http.StatusInternalServerError, err})
 	}
 
-	fmt.Println(data)
 	return
 	accessToken, err := CheckAccessToken(req)
 	token := GetOauthToken(accessToken)
@@ -299,6 +298,10 @@ func handleHttpError(res http.ResponseWriter, e StatusError) {
 
 func GetAccessToken(config *oauth2.Config, req *http.Request) (*oauth2.Token, error) {
 	code := req.FormValue("code")
+	customRedirect := req.FormValue("redirect")
+	if customRedirect != "" {
+		config.RedirectURL = customRedirect
+	}
 	ctx := appengine.NewContext(req)
 
 	accessToken, err := config.Exchange(ctx, code)

@@ -1,53 +1,94 @@
 <template>
   <div>
-    <nuxt/>
+    <nuxt />
   </div>
 </template>
 
 <style>
-html {
-  font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  font-size: 16px;
-  word-spacing: 1px;
-  -ms-text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  box-sizing: border-box;
-}
+  .full-height {
+    height: 100vh;
+  }
+    .page-enter-active, .page-leave-active {
+        transition: all .25s ease-out;
+    }
+    .page-enter, .page-leave-active {
+        opacity: 0;
+        transform: scale(0.95);
+        transform-origin: 50% 50%;
+    }
+    .youtube-text {
+        background-color: #ff0400;
+        padding: 10px;
+        border-radius: 20px;
+        color: #fff
+    }
+    .spotify-text {
+        background-color: #1db954;
+        padding: 10px;
+        border-radius: 20px;
+        color: #fff
+    }
 
-*, *:before, *:after {
-  box-sizing: border-box;
-  margin: 0;
-}
+  .spotify-pulse {
+    box-shadow: 0 0 0 rgba(29,185,84, 0.4);
+    animation: spotify-pulse 2s;
+  }
 
-.button--green {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #3b8070;
-  color: #3b8070;
-  text-decoration: none;
-  padding: 10px 30px;
-}
+  @-webkit-keyframes spotify-pulse {
+    0% {
+      -webkit-box-shadow: 0 0 0 0 rgba(29,185,84, 0.2);
+    }
+    85% {
+      -webkit-box-shadow: 0 0 0 500px rgba(29,185,84, 0);
+    }
+    100% {
+      -webkit-box-shadow: 0 0 0 0 rgba(29,185,84, 0);
+    }
+  }
+  @keyframes spotify-pulse {
+    0% {
+      -moz-box-shadow: 0 0 0 0 rgba(29,185,84, 0.2);
+      box-shadow: 0 0 0 0 rgba(29,185,84, 0.4);
+    }
+    85% {
+      -moz-box-shadow: 0 0 0 500px rgba(29,185,84, 0);
+      box-shadow: 0 0 0 500px rgba(29,185,84, 0);
+    }
+    100% {
+      -moz-box-shadow: 0 0 0 0 rgba(29,185,84, 0);
+      box-shadow: 0 0 0 0 rgba(29,185,84, 0);
+    }
+  }
 
-.button--green:hover {
-  color: #fff;
-  background-color: #3b8070;
-}
+  .youtube-pulse {
+    box-shadow: 0 0 0 rgba(255,4,0, 0.2);
+    animation: youtube-pulse 2s;
+  }
 
-.button--grey {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #35495e;
-  color: #35495e;
-  text-decoration: none;
-  padding: 10px 30px;
-  margin-left: 15px;
-}
-
-.button--grey:hover {
-  color: #fff;
-  background-color: #35495e;
-}
+  @-webkit-keyframes youtube-pulse {
+    0% {
+      -webkit-box-shadow: 0 0 0 0 rgba(255,4,0, 0.2);
+    }
+    85% {
+      -webkit-box-shadow: 0 0 0 500px rgba(255,4,0, 0);
+    }
+    100% {
+      -webkit-box-shadow: 0 0 0 500px rgba(255,4,0, 0);
+    }
+  }
+  @keyframes youtube-pulse {
+    0% {
+      -moz-box-shadow: 0 0 0 500px rgba(255,4,0, 0.2);
+      box-shadow: 0 0 0 0 rgba(255,4,0, 0.2);
+    }
+    85% {
+      -moz-box-shadow: 0 0 0 500px rgba(255,4,0, 0);
+      box-shadow: 0 0 0 500px rgba(255,4,0, 0);
+    }
+    100% {
+      -moz-box-shadow: 0 0 0 500px rgba(255,4,0, 0);
+      box-shadow: 0 0 0 500px rgba(255,4,0, 0);
+    }
+  }
 </style>
 

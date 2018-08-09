@@ -8,18 +8,9 @@ export const mutations = {
   storeUrl(state, url) {
     state.authUrl = url;
   },
-   async storeAccessToken(state, accessCode) {
-       const client = this.app.apolloProvider.defaultClient;
-       const accessToken = await client.query({
-           query: gql`
-        {
-          youtubePapoi {
-            accessCode
-          }
-        }
-      `
-       });
-    }
+  storeAccessToken(state, accessToken) {
+    state.accessToken = accessToken;
+  }
 };
 
 export const actions = {
@@ -28,7 +19,7 @@ export const actions = {
     const url = await client.query({
       query: gql`
         {
-          youtubeAuthUrl {
+          youtubeAuthUrl(redirect: "http://localhost:3000/youtube-callback") {
             url
           }
         }
@@ -36,7 +27,26 @@ export const actions = {
     });
     context.commit("storeUrl", url.data.youtubeAuthUrl.url);
   },
-   async getAccessTokenFromUrl(context, payload) {
-      context.commit("storeAccessToken", payload);
-    },
+  async storeAccessToken(context, accessCode) {
+    const client = this.app.apolloProvider.defaultClient;
+    const { data } = await client.query({
+      query: gql`
+      {
+          youtubeAuth(
+            code: "${accessCode}"
+            redirect: "http://localhost:3000/youtube-callback"
+          ) {
+            accessToken
+          }
+       }
+      `,
+      variables: {
+        accessCode
+      }
+    });
+    context.commit("storeAccessToken", data.youtubeAuth.accessToken);
+  },
+  async getAccessTokenFromUrl(context, payload) {
+    context.dispatch("storeAccessToken", payload);
+  }
 };

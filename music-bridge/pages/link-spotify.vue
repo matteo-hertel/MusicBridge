@@ -11,9 +11,10 @@
                     <div class="col">
                         <p class="text-center lead">First, let's log in to your Spotify account.</p>
                         <p class="text-center">
-                            <nuxt-link to="" class="btn btn-primary btn-lg">
+<!--Move this to its own function -->
+                            <b-button :href="spotifyUrl" class="btn btn-primary btn-lg">
                                 Log in to Spotify
-                            </nuxt-link>
+                            </b-button>
                             <nuxt-link to="link-youtube" class="btn btn-primary btn-lg">
                                 Next
                             </nuxt-link>
@@ -26,15 +27,14 @@
 </template>
 
 <script>
-    // import AppLogo from "~/components/AppLogo.vue";
-
-    // export default {
-    //   components: {
-    //     AppLogo
-    //   }
-    // };
+export default {
+  computed: {
+    spotifyUrl: function() {
+      return this.$store.state.spotify.authUrl;
+    }
+  }
+};
 </script>
 
 <style>
-
 </style>

@@ -1,7 +1,8 @@
 import gql from "graphql-tag";
 export const state = () => ({
   authUrl: "",
-  accessToken: ""
+  accessToken: "",
+  accessCode: ""
 });
 
 export const mutations = {
@@ -10,6 +11,9 @@ export const mutations = {
   },
   storeAccessToken(state, accessToken) {
     state.accessToken = accessToken;
+  },
+  storeAccessCode(state, accessCode) {
+    state.accessCode = accessCode;
   }
 };
 
@@ -28,6 +32,9 @@ export const actions = {
     context.commit("storeUrl", data.spotifyAuthUrl.url);
   },
   async storeAccessToken(context, accessCode) {
+    if (!accessCode || context.state.accessCode === accessCode) {
+      return;
+    }
     const client = this.app.apolloProvider.defaultClient;
     const { data } = await client.query({
       query: gql`
@@ -45,6 +52,7 @@ export const actions = {
       }
     });
     context.commit("storeAccessToken", data.spotifyAuth.accessToken);
+    context.commit("storeAccessCode", accessCode);
   },
   async getAccessTokenFromUrl(context, payload) {
     context.dispatch("storeAccessToken", payload);

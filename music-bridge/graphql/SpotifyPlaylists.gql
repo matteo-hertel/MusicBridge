@@ -1,0 +1,10 @@
+query SpotifyPlaylists($accessToken: String!) {
+   spotifyPlaylists(accessToken: $accessToken){
+     name,
+     id,
+     tracks{
+       artist,
+       name
+     }
+   }
+ }

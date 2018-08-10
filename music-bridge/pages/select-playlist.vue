@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+
         <div class="row full-height align-items-top">
             <div class="col">
                 <div class="row">
@@ -52,27 +53,26 @@
 </template>
 
 <script>
-
-    export default {
-        data() {
-            return {
-                playlists: [
-                    { text: "Select your playlist", value: null },
-                    { text: 'Playlist One', value: 1 },
-                    { text: 'Playlist Two', value: 2 },
-                    { text: 'Playlist Three', value: 3 }
-                ],
-                selectedPlaylist: null,
-                songs: [
-                    { title: "The blahh of papoi", artist: "Lorem", videoId: "aghBrGfF2Bw" },
-                    { title: "The art of the papoi", artist: "King Bob", videoId: "Tc2EvaiY0s4" }
-                ]
-            }
-        }
+export default {
+  apollo: () => ({
+    // Query with parameters
+    playlists: {
+      // gql query
+      query: require("~/graphql/SpotifyPlaylists.gql"),
+      // Static parameters
+      variables: {
+        accessToken: this.$store.state.spotify.accessToken
+      }
+    }
+  }),
+  data() {
+    return {
+      selectedPlaylist: 0,
+      playlists: []
     };
-
+  }
+};
 </script>
 
 <style>
-
 </style>

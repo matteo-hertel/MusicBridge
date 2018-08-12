@@ -9,14 +9,13 @@
         </div>
         <div class="row">
         <div class="col">
-          <p class="text-center lead">Spotify playlists to YouTube Music - The fast way.</p>
+          <p class="text-center lead">Your Session is Expired 😅</p>
           <p class="text-center">
-            Music Bridge stores none of you data. We use short duration tokens to access your accounts.<br/>
-            These tokens last one hour and then expire. Think of it like a parking ticket for your account!
+As you know we do not store any of the information related to your or your music provider(s), the upside you don't have to worry about your data being stolen, the downside is your session is valid for only 1 hour.
           </p>
           <p class="text-center">
-            <nuxt-link to="/link-spotify" class="btn btn-primary btn-lg">
-              Neat! Let's Go!
+            <nuxt-link to="/" class="btn btn-primary btn-lg">
+              Let's go again!
             </nuxt-link>
           </p>
         </div>

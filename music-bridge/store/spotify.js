@@ -1,22 +1,39 @@
 import gql from "graphql-tag";
-export const state = () => ({
+
+const defaultState = {
   authUrl: "",
   accessToken: "",
-  accessCode: ""
-});
+  accessCode: "",
+  expiry: null
+};
+
+export const state = () => defaultState;
 
 export const mutations = {
   storeUrl(state, url) {
     state.authUrl = url;
   },
-  storeAccessToken(state, accessToken) {
+  storeAuthInfo(state, { accessToken, accessCode, expiry }) {
     state.accessToken = accessToken;
-  },
-  storeAccessCode(state, accessCode) {
     state.accessCode = accessCode;
+    state.expiry = expiry;
+  },
+  wipeState(state) {
+    Object.keys(state).map(k => {
+      state[k] = defaultState[k];
+    });
   }
 };
+export const getters = {
+  isExpired: state => {
+    if (!state.expiry) return false;
 
+    if (new Date() > new Date(state.expiry)) {
+      return true;
+    }
+    return false;
+  }
+};
 export const actions = {
   async fetchAuthUrl(context, payload) {
     const client = this.app.apolloProvider.defaultClient;
@@ -43,7 +60,8 @@ export const actions = {
             code: "${accessCode}"
             redirect: "http://localhost:3000/spotify-callback"
           ) {
-            accessToken
+            accessToken,
+            expiry
           }
        }
       `,
@@ -51,8 +69,10 @@ export const actions = {
         accessCode
       }
     });
-    context.commit("storeAccessToken", data.spotifyAuth.accessToken);
-    context.commit("storeAccessCode", accessCode);
+    context.commit("storeAuthInfo", {
+      ...data.spotifyAuth,
+      accessCode
+    });
   },
   async getAccessTokenFromUrl(context, payload) {
     context.dispatch("storeAccessToken", payload);

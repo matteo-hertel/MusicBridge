@@ -7,7 +7,11 @@ module.exports = {
     meta: [
       { charset: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { hid: "description", name: "description", content: "Convert Spotify playlists into YouTube Music playlists" }
+      {
+        hid: "description",
+        name: "description",
+        content: "Convert Spotify playlists into YouTube Music playlists"
+      }
     ],
     link: [
       { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
@@ -32,9 +36,10 @@ module.exports = {
   ** Build configuration
   */
   plugins: [
-      { src: "~/plugins/localStorage.js", ssr: false },
-      { src: "~/plugins/storeInit.js", ssr: false }
-      ],
+    { src: "~/plugins/localStorage.js", ssr: false },
+    { src: "~/plugins/storeInit.js", ssr: false },
+    { src: "~/plugins/authCheck.js", ssr: false }
+  ],
   modules: [["bootstrap-vue/nuxt", { css: false }], "@nuxtjs/apollo"],
   apollo: {
     clientConfigs: {

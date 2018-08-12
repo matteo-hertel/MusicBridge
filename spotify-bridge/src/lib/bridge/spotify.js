@@ -20,18 +20,12 @@ function spotifyApiProvider(spotifyApi) {
   function getAuthorizeURL() {
     return spotifyApi.createAuthorizeURL(scopes);
   }
-  async function getInitalUserInfo() {
-    const user = await spotifyApi.getMe();
-    return {
-      accessToken: spotifyApi.getAccessToken(),
-      display_name: user.body.display_name,
-    };
+  async function getUserInfo() {
+    return await spotifyApi.getMe();
   }
   async function getApiToken(CALLBACK_TOKEN) {
-    console.log(spotifyApi);
     const auth = await spotifyApi.authorizationCodeGrant(CALLBACK_TOKEN);
-    spotifyApi.setAccessToken(auth.body['access_token']);
-    spotifyApi.setRefreshToken(auth.body['refresh_token']);
+    return auth.body;
   }
 
   function getUserPlaylists() {
@@ -62,7 +56,7 @@ function spotifyApiProvider(spotifyApi) {
     getAllPlaylists,
     getApiToken,
     getAuthorizeURL,
-    getInitalUserInfo,
+    getUserInfo,
     setAccessToken,
     spotifyApi,
   };

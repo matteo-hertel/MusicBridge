@@ -1,7 +1,7 @@
 const typeDefs = `
-type SpotifyUserInfo{
+type SpotifyUserAuth{
   accessToken: String!,
-  display_name: String
+  expiry: String!
 }
 
 type SpotifyPlaylist{
@@ -20,7 +20,7 @@ type SpotifyTrack{
 const queryDefs = `
   spotifyPlaylists(accessToken: String!): [SpotifyPlaylist],
   spotifyAuthUrl(redirect: String): AuthUrl!
-  spotifyAuth(code: String!,redirect: String): SpotifyUserInfo
+  spotifyAuth(code: String!,redirect: String): SpotifyUserAuth
 `;
 module.exports = {
   typeDefs,

@@ -1,4 +1,5 @@
 const axios = require('axios');
+const moment = require('moment');
 const spotifyBridgeUrl = process.env.SPOTIFY_BRIDGE_URL;
 
 const errorPassThrough = exc => {
@@ -19,13 +20,19 @@ module.exports = {
     },
     spotifyAuth: async (root, {code, redirect}, context, info) => {
       try {
-        const {data: userInfo} = await axios.get(
+        const {data: auth} = await axios.get(
           `${spotifyBridgeUrl}/auth-callback?code=${code}&redirect=${redirect}`,
           {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
         );
-        return userInfo;
+        console.log(auth);
+        return {
+          accessToken: auth.access_token,
+          expiry: moment()
+            .add(auth.expires_in, 'seconds')
+            .toISOString(),
+        };
       } catch (exc) {
         errorPassThrough(exc);
       }

@@ -10,12 +10,12 @@ function getAuthUrl(req, res) {
   return res.json({url: getAuthorizeURL(body.redirect)});
 }
 async function authCallback(req, res) {
-  const {getApiToken, getInitalUserInfo} = req.apiProvider;
+  const {getApiToken} = req.apiProvider;
   try {
     const callbackToken = req.query.code;
-    await getApiToken(callbackToken);
+    const auth = await getApiToken(callbackToken);
 
-    res.json(await getInitalUserInfo());
+    res.json(auth);
   } catch (exc) {
     handleErrors(exc, res);
   }
@@ -48,7 +48,7 @@ function withCustomRedirect(req, res, next) {
     } = req;
   }
   if (!redirect) {
-    next();
+    return next();
   }
   req.apiProvider.spotifyApi.setRedirectURI(redirect);
   next();
@@ -58,7 +58,7 @@ async function accessTokenMiddleware(req, res, next) {
   const {setAccessToken} = req.apiProvider;
   const apiToken = req.get('X-Spotify-Token');
   if (!apiToken) {
-    return res.sendstatus('401');
+    return res.sendStatus('401');
   }
   setAccessToken(apiToken);
   next();

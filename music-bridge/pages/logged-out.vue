@@ -14,7 +14,7 @@
 As you know we do not store any of the information related to your or your music provider(s), the upside you don't have to worry about your data being stolen, the downside is your session is valid for only 1 hour.
           </p>
           <p class="text-center">
-            <nuxt-link to="/" class="btn btn-primary btn-lg">
+            <nuxt-link to="/link-spotify" class="btn btn-primary btn-lg">
               Let's go again!
             </nuxt-link>
           </p>

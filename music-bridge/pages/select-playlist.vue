@@ -1,6 +1,5 @@
 <template>
     <div class="container">
-
         <div class="row full-height align-items-top">
             <div class="col">
                 <div class="row">
@@ -18,7 +17,21 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <b-form-select :options="playlists" v-model="selectedPlaylist" id="playlistSelect"></b-form-select>
+                        <b-form-select :options="playlistTitles" v-model="selectedPlaylist" id="playlistSelect">
+
+                             <template slot="first">
+                                    <!-- this slot appears above the options from 'options' prop -->
+                                    <option :value="false" disabled>-- Please select an option --</option>
+                                  </template>
+                            </b-form-select>
+
+                            <p class="text-center" v-if="selectedPlaylist !== false">
+                            <ul>
+                              <li v-for="(song, index) in selectedSongs" v-bind:key="index">
+                                {{ song.artist}} - {{song.name}}
+                              </li>
+                            </ul>
+                            </p>
                             <p class="text-center" v-if="selectedPlaylist">
                                 Cool, make sure we found the right songs.<br>
                                 You can remove the ones we got wrong.
@@ -54,20 +67,35 @@
 
 <script>
 export default {
-  apollo: () => ({
-    // Query with parameters
-    playlists: {
-      // gql query
+  mounted() {
+    this.$apollo.addSmartQuery("playlists", {
       query: require("~/graphql/SpotifyPlaylists.gql"),
-      // Static parameters
+      update: ({ spotifyPlaylists }) => spotifyPlaylists,
       variables: {
         accessToken: this.$store.state.spotify.accessToken
       }
+    });
+  },
+  computed: {
+    selectedSongs() {
+      if (!this.playlists.length) return [];
+      const tracks = this.playlists.filter((_, index) => {
+        return index === this.selectedPlaylist;
+      })[0].tracks;
+      return tracks;
+    },
+    playlistTitles() {
+      if (!this.playlists.length) return [];
+
+      return this.playlists.map((item, index) => ({
+        value: index,
+        text: `${item.name} (${item.tracks.length})`
+      }));
     }
-  }),
+  },
   data() {
     return {
-      selectedPlaylist: 0,
+      selectedPlaylist: false,
       playlists: []
     };
   }

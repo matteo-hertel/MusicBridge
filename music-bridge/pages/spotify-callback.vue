@@ -11,7 +11,8 @@
                     <div class="col">
                         <p class="text-center lead">Hang on tight!</p>
                         <p class="text-center">
-           <nuxt-link :disabled="!this.$store.state.youtube.accessToken"
+<!-- //Todo move to button component -->
+           <nuxt-link :disabled="!this.$store.state.spotify.accessToken"
                       to="link-youtube" class="btn btn-primary btn-lg">
                                 Next
                             </nuxt-link>

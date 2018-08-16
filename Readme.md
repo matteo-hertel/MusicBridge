@@ -11,7 +11,7 @@ A super simple diagram explains how it works:
 ![diagram](./docs/readme/MusicBridge.png)
 
 ## Roadmap
-Still in heavy development for an MVP the roadmap looks like this:
+The MVP is almost there the roadmap to get it done looks like this:
 - [x] Spotify Bridge
 - [x] Youtube Bridge
 - [x] GraphQL layer
@@ -19,6 +19,15 @@ Still in heavy development for an MVP the roadmap looks like this:
     - [ ] Pretty app by Rob Strover
     - [x] Vuex 
     - [x] Apollo
+
+Post MVP
+- [ ] Add tests across the board
+  - [ ] Spotify bridge
+  - [ ] Youtube bridge
+  - [ ] Music bridge Data
+  - [ ] Music bridge
+- [ ] refactor youtube brige
+- UI improvement
 
 # Infx
 Excluding various different secrets, API keys and  config, all the microservices will be deployable on Google App Engine with a simple command, so anybody can run its own copy of the whole thing CI can be configured for autodeploy but it's not fun so it'll be one of the last things on the list.

@@ -1,0 +1,9 @@
+mutation SearchSongs($accessToken: String!, $songs:[YoutubeSongInput]!) {
+  youtubeSearchSongs(accessToken: $accessToken,
+    songs: $songs) {
+    results{
+    videoId,
+    title
+    }
+  }
+}

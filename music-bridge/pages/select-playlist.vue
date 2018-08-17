@@ -17,17 +17,18 @@
                 </div>
                 <div class="row">
                     <div class="col">
+<b-button @click="testQuery">Test Query</b-button>
                         <b-form-select :options="playlistTitles" v-model="selectedPlaylist" id="playlistSelect">
 
                              <template slot="first">
-                                    <!-- this slot appears above the options from 'options' prop -->
+                                     this slot appears above the options from 'options' prop
                                     <option :value="false" disabled>-- Please select an option --</option>
                                   </template>
                             </b-form-select>
 
                             <p class="text-center" v-if="selectedPlaylist !== false">
                             <ul>
-                              <li v-for="(song, index) in selectedSongs" v-bind:key="index">
+                              <li v-for="(song, index) in computedSongs" v-bind:key="index">
                                 {{ song.artist}} - {{song.name}}
                               </li>
                             </ul>
@@ -40,23 +41,16 @@
                                 Transfer Playlist
                             </b-button>
                     </div>
-                    <div class="col">
+                    <div class="col" >
                         <div role="tablist" class="shadow-lg">
-                            <!--<b-card v-for="(song, index) in songs" b-bind:key="index" no-body class="mb-1">-->
-                                <!--<b-card-header header-tag="header" class="p-1" role="tab">-->
-                                    <!--<b-btn block href="#" v-b-toggle.accordion.index variant="info">{{ song.title }} - {{ song.artist }}</b-btn>-->
-                                <!--</b-card-header>-->
-                                <!--<b-collapse id="accordion{{ index }}" accordion="my-accordion" role="tabpanel">-->
-                                    <!--<b-card-body>-->
-                                        <!--<p class="card-text">-->
-                                            <!--<b-embed type="iframe" aspect="16by9" controls poster="poster.png">-->
-                                                <!--<source src="https://www.youtube.com/embed/{{ song.videoId }}"-->
-                                                        <!--type='iframe' />-->
-                                            <!--</b-embed>-->
-                                        <!--</p>-->
-                                    <!--</b-card-body>-->
-                                <!--</b-collapse>-->
-                            <!--</b-card>-->
+                            <b-card v-for="(song, index) in searchResults" v-bind:key="index" no-body class="mb-1">
+                                <b-card-header header-tag="header" class="p-1" role="tab">
+                                    <b-btn block  v-b-toggle="getAccordionID('accordion', index)" variant="info">{{ song.results[0].title }} - {{ song.results[0].artist }}</b-btn>
+                                </b-card-header>
+                            <div v-for="(video, i) in song.results" v-bind:key="i" no-body class="mb-1">
+<LazyCollapse :url="getVideoUrl(video.videoId)" :id="getAccordionID('accordion', index)"></LazyCollapse>
+                            </div>
+                            </b-card>
                         </div>
                     </div>
                 </div>
@@ -66,7 +60,11 @@
 </template>
 
 <script>
+import LazyCollapse from "~/components/LazyCollapse";
 export default {
+  components: {
+    LazyCollapse
+  },
   mounted() {
     this.$apollo.addSmartQuery("playlists", {
       query: require("~/graphql/SpotifyPlaylists.gql"),
@@ -76,13 +74,40 @@ export default {
       }
     });
   },
-  computed: {
+  methods: {
+    getAccordionID(prefix, index) {
+      return `${prefix}-${index}`;
+    },
+    getVideoUrl(videoId) {
+      return `https://www.youtube.com/embed/${videoId}`;
+    },
+    testQuery() {
+      this.$apollo
+        .mutate({
+          mutation: require("~/graphql/SearchSongs.gql"),
+          variables: {
+            songs: this.selectedSongs().map(({ artist, name }) => {
+              return { artist, title: name };
+            }),
+            accessToken: this.$store.state.youtube.accessToken
+          }
+        })
+        .then(
+          ({ data: { youtubeSearchSongs } }) =>
+            (this.searchResults = youtubeSearchSongs)
+        );
+    },
     selectedSongs() {
       if (!this.playlists.length) return [];
       const tracks = this.playlists.filter((_, index) => {
         return index === this.selectedPlaylist;
       })[0].tracks;
       return tracks;
+    }
+  },
+  computed: {
+    computedSongs() {
+      return this.selectedSongs();
     },
     playlistTitles() {
       if (!this.playlists.length) return [];
@@ -96,6 +121,7 @@ export default {
   data() {
     return {
       selectedPlaylist: false,
+      searchResults: [],
       playlists: []
     };
   }

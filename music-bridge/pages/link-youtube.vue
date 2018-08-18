@@ -9,13 +9,29 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <p class="text-center lead">Next, let's log in to your YouTube account.</p>
+
+                        <ConditionalText
+                                :textDependency="youtubeAccessToken"
+                                showIfTrue="We already have your YouTube access Token."
+                                showIfFalse="Now, let's log in to your YouTube account."
+                        ></ConditionalText>
+
                         <p class="text-center">
-                            <YoutubeLoginButton />
-                            <nuxt-link to="select-playlist" class="btn btn-primary btn-lg">
-                                Next
-                            </nuxt-link>
+
+                            <LoginButton
+                                    :buttonDependency="!youtubeAccessToken"
+                                    :url="youtubeUrl" buttonMessage="Log in to YouTube"
+                                    waitMessage="Just a second..."
+                            ></LoginButton>
+
+                            <InternalLinkButton
+                                    linkTo="/select-playlist"
+                                    :buttonDependency="youtubeAccessToken"
+                                    buttonMessage="Next"
+                            ></InternalLinkButton>
+
                         </p>
+
                     </div>
                 </div>
             </div>
@@ -24,15 +40,23 @@
 </template>
 
 <script>
-    import YoutubeLoginButton from "~/components/YoutubeLoginButton.vue";
+    import LoginButton from "~/components/LoginButton.vue";
+    import InternalLinkButton from "~/components/InternalLinkButton.vue";
+    import ConditionalText from "~/components/ConditionalText.vue";
 
     export default {
+        computed: {
+            youtubeUrl: function() {
+                return this.$store.state.youtube.authUrl;
+            },
+            youtubeAccessToken: function() {
+                return this.$store.state.youtube.accessToken;
+            }
+        },
       components: {
-        YoutubeLoginButton,
+        LoginButton,
+        InternalLinkButton,
+        ConditionalText
       }
     };
 </script>
-
-<style>
-
-</style>

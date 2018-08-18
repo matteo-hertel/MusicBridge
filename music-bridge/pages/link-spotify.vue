@@ -9,16 +9,29 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <p class="text-center lead">First, let's log in to your Spotify account.</p>
+
+                        <ConditionalText
+                                :textDependency="spotifyAccessToken"
+                                showIfTrue="We already have your Spotify access Token."
+                                showIfFalse="First, let's log in to your Spotify account."
+                        ></ConditionalText>
+
                         <p class="text-center">
-<!--Move this to its own function -->
-                            <b-button :href="spotifyUrl" class="btn btn-primary btn-lg">
-                                Log in to Spotify
-                            </b-button>
-                            <nuxt-link to="link-youtube" class="btn btn-primary btn-lg">
-                                Next
-                            </nuxt-link>
+
+                            <LoginButton
+                                    :buttonDependency="!spotifyAccessToken"
+                                    :url="spotifyUrl" buttonMessage="Log in to Spotify"
+                                    waitMessage="Just a second..."
+                            ></LoginButton>
+
+                            <InternalLinkButton
+                                    linkTo="/link-youtube"
+                                    :buttonDependency="spotifyAccessToken"
+                                    buttonMessage="Next"
+                            ></InternalLinkButton>
+
                         </p>
+
                     </div>
                 </div>
             </div>
@@ -27,14 +40,23 @@
 </template>
 
 <script>
+    import LoginButton from "~/components/LoginButton.vue";
+    import InternalLinkButton from "~/components/InternalLinkButton.vue";
+    import ConditionalText from "~/components/ConditionalText.vue";
+
 export default {
   computed: {
     spotifyUrl: function() {
       return this.$store.state.spotify.authUrl;
+    },
+    spotifyAccessToken: function() {
+        return this.$store.state.spotify.accessToken;
     }
-  }
+  },
+    components: {
+        LoginButton,
+        InternalLinkButton,
+        ConditionalText
+    }
 };
 </script>
-
-<style>
-</style>

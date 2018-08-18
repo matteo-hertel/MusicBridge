@@ -1,0 +1,16 @@
+query CreateYoutubePlalist($accessToken: String!, $title: String!, $privacyStatus: String!) {
+   youtubeCreatePlaylist(
+     accessToken: $accessToken
+     title:$title
+     privacyStatus: $privacyStatus
+   ){
+     id,
+     kind,
+     snippet{
+       title
+     }
+     status{
+       privacyStatus
+     }
+   }
+ }

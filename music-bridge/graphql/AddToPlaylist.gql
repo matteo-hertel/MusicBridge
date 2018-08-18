@@ -1,0 +1,11 @@
+query AddToPlaylist($accessToken: String!, $videoId: String!, $playlistId: String!) {
+   youtubeAddToPlaylist(
+     accessToken: $accessToken
+     videoId:$videoId
+     playlistId: $playlistId
+   ){
+     snippet{
+       title
+     }
+   }
+}

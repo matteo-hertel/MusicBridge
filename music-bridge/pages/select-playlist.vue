@@ -132,19 +132,19 @@ export default {
           }
         });
       };
-      //    try {
-      //      const playlist = await createPlaylist(
-      //        this.playlists[this.selectedPlaylist]
-      //      );
-      //    } catch (exc) {
-      //      return this.$store.dispatch(
-      //        "setGlobalError",
-      //        "An error occurred while creating the youtube playlist, most likely API rating limit 😞"
-      //      );
-      //    }
+      try {
+        const playlist = await createPlaylist(
+          this.playlists[this.selectedPlaylist]
+        );
+      } catch (exc) {
+        return this.$store.dispatch(
+          "setGlobalError",
+          "An error occurred while creating the youtube playlist, most likely API rating limit 😞"
+        );
+      }
       for (const { videoId } of this.chosenSongs) {
         try {
-          await addToPlaylist("PLRYyVjiNvLndTeNWDeo0qIiW5HWqUZGNO", videoId);
+          await addToPlaylist(playlist.id, videoId);
           this.completed = ++this.completed;
         } catch (exc) {
           return this.$store.dispatch(

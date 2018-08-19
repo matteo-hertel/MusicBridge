@@ -1,6 +1,7 @@
 <template>
     <div class="container">
-        <div class="row full-height align-items-top">
+<div class="full-height">
+        <div class="row  align-items-top">
             <div class="col">
                 <div class="row">
                     <div class="col">
@@ -66,6 +67,13 @@
                 </div>
             </div>
         </div>
+ <b-alert variant="danger"
+fade
+             dismissible
+             :show="this.$store.getters['hasError']">
+{{this.$store.state.globalError}}
+    </b-alert>
+        </div>
     </div>
 </template>
 
@@ -122,13 +130,28 @@ export default {
           }
         });
       };
-      const playlist = await createPlaylist(
-        this.playlists[this.selectedPlaylist]
-      );
-      this.chosenSongs.map(async ({ videoId }) => {
-        const data = await addToPlaylist(playlist.id, videoId);
-        console.log(data);
+      try {
+        const playlist = await createPlaylist(
+          this.playlists[this.selectedPlaylist]
+        );
+      } catch (exc) {
+        return this.$store.dispatch(
+          "setGlobalError",
+          "An error occurred while creating the youtube playlist, most likely API rating limit 😞"
+        );
+      }
+      const test = this.chosenSongs.filter(async ({ title, videoId }) => {
+        try {
+          const data = await addToPlaylist(playlist.id, videoId);
+        } catch (exc) {
+          return this.$store.dispatch(
+            "setGlobalError",
+            `An error occurred while adding the song "${title}"`
+          );
+        }
+        return false;
       });
+      console.log(test);
     },
     makeSearch() {
       this.$apollo
@@ -167,6 +190,7 @@ export default {
       }));
     }
   },
+  middleware: "authenticated",
   data() {
     return {
       selectedPlaylist: false,

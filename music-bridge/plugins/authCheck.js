@@ -1,8 +1,5 @@
 export default ({ store, redirect }) => {
-  const DELAY = 40 * 1000;
-  autchCheck(DELAY);
-
-  function autchCheck(delay) {
+  setInterval(() => {
     if (
       store.getters["spotify/isExpired"] ||
       store.getters["youtube/isExpired"]
@@ -10,6 +7,5 @@ export default ({ store, redirect }) => {
       store.dispatch("logout");
       redirect(302, { path: "/logged-out" });
     }
-    setInterval(autchCheck, delay);
-  }
+  }, 10 * 1000);
 };

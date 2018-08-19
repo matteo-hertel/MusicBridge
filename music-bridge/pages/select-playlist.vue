@@ -6,6 +6,13 @@
                 <div class="row">
                     <div class="col">
                         <h1 class="text-center">Transfer your Playlists</h1>
+
+ <b-alert variant="danger"
+fade
+             dismissible
+             :show="this.$store.getters['hasError']">
+{{this.$store.state.globalError}}
+    </b-alert>
                     </div>
                 </div>
                 <div class="row">
@@ -60,6 +67,7 @@
                                 {{ song.title}} - {{song.videoId}}
                               </li>
                             </ul>
+<p class='center'>Transfered  {{this.transferCompleted}} / {{this.chosenSongs.length}}</p>
                             <b-button @click='transferPlaylist' >
                                 Make it so!
                             </b-button>
@@ -67,12 +75,6 @@
                 </div>
             </div>
         </div>
- <b-alert variant="danger"
-fade
-             dismissible
-             :show="this.$store.getters['hasError']">
-{{this.$store.state.globalError}}
-    </b-alert>
         </div>
     </div>
 </template>
@@ -130,28 +132,27 @@ export default {
           }
         });
       };
-      try {
-        const playlist = await createPlaylist(
-          this.playlists[this.selectedPlaylist]
-        );
-      } catch (exc) {
-        return this.$store.dispatch(
-          "setGlobalError",
-          "An error occurred while creating the youtube playlist, most likely API rating limit 😞"
-        );
-      }
-      const test = this.chosenSongs.filter(async ({ title, videoId }) => {
+      //    try {
+      //      const playlist = await createPlaylist(
+      //        this.playlists[this.selectedPlaylist]
+      //      );
+      //    } catch (exc) {
+      //      return this.$store.dispatch(
+      //        "setGlobalError",
+      //        "An error occurred while creating the youtube playlist, most likely API rating limit 😞"
+      //      );
+      //    }
+      for (const { videoId } of this.chosenSongs) {
         try {
-          const data = await addToPlaylist(playlist.id, videoId);
+          await addToPlaylist("PLRYyVjiNvLndTeNWDeo0qIiW5HWqUZGNO", videoId);
+          this.completed = ++this.completed;
         } catch (exc) {
           return this.$store.dispatch(
             "setGlobalError",
             `An error occurred while adding the song "${title}"`
           );
         }
-        return false;
-      });
-      console.log(test);
+      }
     },
     makeSearch() {
       this.$apollo
@@ -178,6 +179,9 @@ export default {
     }
   },
   computed: {
+    transferCompleted() {
+      return this.completed;
+    },
     computedSongs() {
       return this.selectedSongs();
     },
@@ -195,6 +199,7 @@ export default {
     return {
       selectedPlaylist: false,
       searchResults: [],
+      completed: 0,
       chosenSongs: [],
       playlists: []
     };

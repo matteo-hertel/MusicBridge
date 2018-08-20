@@ -9,29 +9,30 @@
                 </div>
                 <div class="row">
                     <div class="col">
-
-                        <ConditionalText
-                                :textDependency="spotifyAccessToken"
-                                showIfTrue="We already have your Spotify access Token."
-                                showIfFalse="First, let's log in to your Spotify account."
-                        ></ConditionalText>
-
-                        <p class="text-center">
-
-                            <LoginButton
-                                    :buttonDependency="!spotifyAccessToken"
-                                    :url="spotifyUrl" buttonMessage="Log in to Spotify"
-                                    waitMessage="Just a second..."
-                            ></LoginButton>
-
-                            <InternalLinkButton
-                                    linkTo="/link-youtube"
-                                    :buttonDependency="spotifyAccessToken"
-                                    buttonMessage="Next"
-                            ></InternalLinkButton>
-
-                        </p>
-
+                        <ConditionalBlock
+                                :condition="spotifyAccessToken"
+                        >
+                            <div slot="true">
+                                <p class="text-center lead">We already have your Spotify access Token.</p>
+                                <p class="text-center">
+                                    <InternalLinkButton
+                                            linkTo="/link-youtube"
+                                            :buttonDependency="spotifyAccessToken"
+                                            buttonMessage="Skip"
+                                    ></InternalLinkButton>
+                                </p>
+                            </div>
+                            <div slot="false">
+                                <p class="text-center lead">First, let's log in to your Spotify account.</p>
+                                <p class="text-center">
+                                    <LoginButton
+                                            :buttonDependency="!spotifyAccessToken"
+                                            :url="spotifyUrl" buttonMessage="Log in to Spotify"
+                                            waitMessage="Just a second..."
+                                    ></LoginButton>
+                                </p>
+                            </div>
+                        </ConditionalBlock>
                     </div>
                 </div>
             </div>
@@ -42,7 +43,7 @@
 <script>
     import LoginButton from "~/components/LoginButton.vue";
     import InternalLinkButton from "~/components/InternalLinkButton.vue";
-    import ConditionalText from "~/components/ConditionalText.vue";
+    import ConditionalBlock from "~/components/ConditionalBlock.vue";
 
 export default {
   computed: {
@@ -56,7 +57,7 @@ export default {
     components: {
         LoginButton,
         InternalLinkButton,
-        ConditionalText
+        ConditionalBlock
     }
 };
 </script>

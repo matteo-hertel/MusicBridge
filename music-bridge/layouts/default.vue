@@ -1,3 +1,12 @@
+
+ <!--make this happen all around on all pages-->
+<!--<b-alert variant="danger"-->
+<!--fade-->
+<!--dismissible-->
+<!--:show="this.$store.getters['hasError']">-->
+<!--{{this.$store.state.globalError}}-->
+<!--</b-alert>-->
+
 <template>
   <div>
     <nuxt />
@@ -11,7 +20,7 @@ Hello There
   </div>
 </template>
 
-<style>
+<style lang="scss">
 .full-height {
   height: 100vh;
 }
@@ -41,6 +50,13 @@ Hello There
 .spotify-pulse {
   box-shadow: 0 0 0 rgba(29, 185, 84, 0.4);
   animation: spotify-pulse 2s;
+  &.pulse-repeat {
+    animation: spotify-pulse 2s infinite;
+   }
+}
+
+.pulse-repeat {
+  animation: infinite;
 }
 
 @-webkit-keyframes spotify-pulse {
@@ -72,6 +88,9 @@ Hello There
 .youtube-pulse {
   box-shadow: 0 0 0 rgba(255, 4, 0, 0.2);
   animation: youtube-pulse 2s;
+  &.pulse-repeat {
+    animation: youtube-pulse 2s infinite;
+  }
 }
 
 @-webkit-keyframes youtube-pulse {

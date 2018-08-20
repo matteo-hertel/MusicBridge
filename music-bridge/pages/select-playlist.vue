@@ -6,12 +6,6 @@
                 <div class="row">
                     <div class="col">
                         <h1 class="text-center">Transfer your Playlists</h1>
-               <b-alert variant="danger"
-                fade
-                 dismissible
-                 :show="this.$store.getters['hasError']">
-                  {{this.$store.state.globalError}}
-                </b-alert>
                     </div>
                 </div>
                 <div class="row">

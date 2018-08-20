@@ -1,6 +1,13 @@
 <template>
   <div>
     <nuxt />
+               <b-alert variant="danger"
+                fade
+                 dismissible
+                 :show="true">
+Hello There
+                </b-alert>
+
   </div>
 </template>
 

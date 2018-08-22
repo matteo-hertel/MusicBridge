@@ -1,6 +1,4 @@
 <template>
-    <div class="container">
-        <div class="row full-height align-items-center">
             <div class="col">
                 <div class="row">
                     <div class="col">
@@ -24,8 +22,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 </template>
 
 <script>

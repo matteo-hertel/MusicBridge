@@ -1,6 +1,4 @@
 <template>
-  <div class="container">
-    <div class="row full-height align-items-center">
       <div class="col">
         <div class="row">
           <div class="col">
@@ -9,7 +7,7 @@
         </div>
         <div class="row">
         <div class="col">
-          <p class="text-center lead">Spotify playlists to YouTube Music - The fast way.</p>
+          <p class="text-center lead">Convert Spotify playlists to YouTube Music playlists - The fast way.</p>
           <p class="text-center">
             Music Bridge stores none of you data. We use short duration tokens to access your accounts.<br/>
             These tokens last one hour and then expire. Think of it like a parking ticket for your account!
@@ -22,8 +20,6 @@
         </div>
       </div>
       </div>
-    </div>
-  </div>
 </template>
 
 <script>
@@ -31,9 +27,3 @@ export default {
   components: {}
 };
 </script>
-
-<style>
-.full-height {
-  height: 100vh;
-}
-</style>

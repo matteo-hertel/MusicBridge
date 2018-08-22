@@ -1,6 +1,4 @@
 <template>
-    <div class="container">
-<div class="full-height">
         <div class="row  align-items-top">
             <div class="col">
                 <div class="row">
@@ -35,8 +33,6 @@
                 </div>
             </div>
         </div>
-        </div>
-    </div>
 </template>
 
 <script>

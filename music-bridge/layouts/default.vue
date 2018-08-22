@@ -8,22 +8,37 @@
 <!--</b-alert>-->
 
 <template>
-  <div>
+    <div>
+  <div class="container">
+    <div class="row full-height align-items-center">
     <nuxt />
-               <b-alert variant="danger"
-                fade
-                 dismissible
-                 :show="true">
-Hello There
-                </b-alert>
-
+    </div>
   </div>
+        <div class="container-fluid">
+            <Ravers></Ravers>
+        </div>
+    </div>
 </template>
 
+ <script>
+
+     import Ravers from "~/components/Ravers.vue";
+
+     export default {
+         components: { Ravers }
+     };
+
+ </script>
 <style lang="scss">
-.full-height {
-  height: 100vh;
-}
+
+  .full-height {
+    height: 90vh;
+  }
+
+  h1, h2, h3, h4, h5, h6, p {
+    color: white;-webkit-font-smoothing: antialiased !important;
+  }
+
 .page-enter-active,
 .page-leave-active {
   transition: all 0.25s ease-out;
@@ -118,4 +133,38 @@ Hello There
     box-shadow: 0 0 0 500px rgba(255, 4, 0, 0);
   }
 }
+
+body {
+  background: linear-gradient(240deg, #7F0200, #106B31);
+  background-size: 400% 400%;
+
+  -webkit-animation: ravebg 30s ease infinite;
+  -moz-animation: ravebg 30s ease infinite;
+  animation: ravebg 30s ease infinite;
+
+  @-webkit-keyframes ravebg {
+    0% {
+      background-position: 0% 50%
+    }
+    50% {
+      background-position: 100% 50%
+    }
+    100% {
+      background-position: 0% 50%
+    }
+  }
+
+  @keyframes ravebg {
+    0% {
+      background-position: 0% 50%
+    }
+    50% {
+      background-position: 100% 50%
+    }
+    100% {
+      background-position: 0% 50%
+    }
+  }
+}
+
 </style>

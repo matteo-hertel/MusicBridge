@@ -1,6 +1,4 @@
 <template>
-  <div class="container">
-    <div class="row full-height align-items-center">
       <div class="col">
         <div class="row">
           <div class="col">
@@ -21,8 +19,6 @@ As you know we do not store any of the information related to your or your music
         </div>
       </div>
       </div>
-    </div>
-  </div>
 </template>
 
 <script>

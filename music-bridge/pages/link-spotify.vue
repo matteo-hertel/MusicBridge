@@ -1,39 +1,39 @@
 <template>
+    <div class="col">
+        <div class="row">
             <div class="col">
-                <div class="row">
-                    <div class="col">
-                        <h1 class="text-center"><span class="spotify-pulse spotify-text">Spotify</span></h1>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <ConditionalBlock
-                                :condition="spotifyAccessToken"
-                        >
-                            <div slot="true">
-                                <p class="text-center lead">We already have your Spotify access Token.</p>
-                                <p class="text-center">
-                                    <InternalLinkButton
-                                            linkTo="/link-youtube"
-                                            :buttonDependency="spotifyAccessToken"
-                                            buttonMessage="Skip"
-                                    ></InternalLinkButton>
-                                </p>
-                            </div>
-                            <div slot="false">
-                                <p class="text-center lead">First, let's log in to your Spotify account.</p>
-                                <p class="text-center">
-                                    <LoginButton
-                                            :buttonDependency="!spotifyAccessToken"
-                                            :url="spotifyUrl" buttonMessage="Log in to Spotify"
-                                            waitMessage="Just a second..."
-                                    ></LoginButton>
-                                </p>
-                            </div>
-                        </ConditionalBlock>
-                    </div>
-                </div>
+                <h1 class="text-center"><span class="spotify-pulse spotify-text">Spotify</span></h1>
             </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <ConditionalBlock
+                        :condition="spotifyAccessToken"
+                >
+                    <div slot="true">
+                        <p class="text-center lead">We already have your Spotify access Token.</p>
+                        <p class="text-center">
+                            <InternalLinkButton
+                                    linkTo="/link-youtube"
+                                    :buttonDependency="spotifyAccessToken"
+                                    buttonMessage="Skip"
+                            ></InternalLinkButton>
+                        </p>
+                    </div>
+                    <div slot="false">
+                        <p class="text-center lead">First, let's log in to your Spotify account.</p>
+                        <p class="text-center">
+                            <LoginButton
+                                    :buttonDependency="!spotifyAccessToken"
+                                    :url="spotifyUrl" buttonMessage="Log in to Spotify"
+                                    waitMessage="Just a second..."
+                            ></LoginButton>
+                        </p>
+                    </div>
+                </ConditionalBlock>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>

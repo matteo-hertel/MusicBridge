@@ -1,33 +1,35 @@
 <template>
 <div>
-    <div class="row ravers">
-        <div class="col"><img class="raver1" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
-        <div class="col"><img class="raver2" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
-        <div class="col"><img class="raver2" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
-        <div class="col"><img class="raver2" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
-        <div class="col"><img class="raver1" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
-        <div class="col"><img class="raver2" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
-        <div class="col"><img class="raver2" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
-        <div class="col"><img class="raver2" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
-        <div class="col"><img class="raver1" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
-        <div class="col"><img class="raver2" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
-        <div class="col"><img class="raver1" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
-        <div class="col"><img class="raver1" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
-    </div>
+    <div class="container-fluid">
+        <div class="row ravers">
+            <div class="col"><img class="raver1" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
+            <div class="col"><img class="raver2" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
+            <div class="col"><img class="raver2" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
+            <div class="col"><img class="raver2" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
+            <div class="col d-none d-sm-block"><img class="raver1" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
+            <div class="col d-none d-sm-block"><img class="raver2" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
+            <div class="col d-none d-sm-block"><img class="raver2" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
+            <div class="col d-none d-sm-block"><img class="raver2" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
+            <div class="col d-none d-sm-block"><img class="raver1" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
+            <div class="col d-none d-sm-block"><img class="raver2" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
+            <div class="col d-none d-md-block"><img class="raver1" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
+            <div class="col d-none d-md-block"><img class="raver1" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
+        </div>
 
-    <div class="row ravers distant-ravers">
-        <div class="col"><img class="raver1" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
-        <div class="col"><img class="raver2" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
-        <div class="col"><img class="raver2" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
-        <div class="col"><img class="raver2" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
-        <div class="col"><img class="raver1" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
-        <div class="col"><img class="raver2" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
-        <div class="col"><img class="raver2" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
-        <div class="col"><img class="raver2" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
-        <div class="col"><img class="raver1" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
-        <div class="col"><img class="raver2" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
-        <div class="col"><img class="raver1" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
-        <div class="col"><img class="raver1" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
+        <div class="row ravers distant-ravers">
+            <div class="col"><img class="raver1" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
+            <div class="col"><img class="raver2" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
+            <div class="col"><img class="raver2" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
+            <div class="col"><img class="raver2" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
+            <div class="col d-none d-sm-block"><img class="raver1" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
+            <div class="col d-none d-sm-block"><img class="raver2" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
+            <div class="col d-none d-sm-block"><img class="raver2" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
+            <div class="col d-none d-sm-block"><img class="raver2" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
+            <div class="col d-none d-sm-block"><img class="raver1" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
+            <div class="col d-none d-sm-block"><img class="raver2" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
+            <div class="col d-none d-md-block"><img class="raver1" src="~/assets/ravers/raver1.png" alt="raver yeahh!"></div>
+            <div class="col d-none d-md-block"><img class="raver1" src="~/assets/ravers/raver2.png" alt="raver yeahh!"></div>
+        </div>
     </div>
 </div>
 </template>
@@ -38,6 +40,7 @@
         &.distant-ravers {
             filter: blur(20px);
         }
+        z-index: -1;
         position: fixed;
         bottom: -140px;
         width: 100%;

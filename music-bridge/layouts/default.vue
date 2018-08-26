@@ -1,34 +1,27 @@
-
- <!--make this happen all around on all pages-->
-<!--<b-alert variant="danger"-->
-<!--fade-->
-<!--dismissible-->
-<!--:show="this.$store.getters['hasError']">-->
-<!--{{this.$store.state.globalError}}-->
-<!--</b-alert>-->
-
 <template>
     <div>
-  <div class="container">
-    <div class="row full-height align-items-center">
-    <nuxt />
-    </div>
-  </div>
-        <div class="container-fluid">
-            <Ravers></Ravers>
+        <div class="container">
+          <div class="row full-height align-items-center">
+            <nuxt />
+          </div>
         </div>
-    </div>
+            <GlobalErrors />
+            <Ravers />
+        </div>
+
 </template>
 
  <script>
-
+     import GlobalErrors from "~/components/GlobalErrors.vue";
      import Ravers from "~/components/Ravers.vue";
 
+
      export default {
-         components: { Ravers }
+         components: { Ravers, GlobalErrors }
      };
 
- </script>
+</script>
+
 <style lang="scss">
 
   .full-height {

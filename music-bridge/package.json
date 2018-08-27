@@ -5,7 +5,7 @@
   "description": "Move your playlists from one music provider to another 🤘",
   "author": "Rob Strover <robstrover@gmail.com>",
   "scripts": {
-    "dev": "nuxt",
+    "dev": "nuxt --spa",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",

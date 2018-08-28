@@ -6,7 +6,8 @@ const stepMapping = {
 
 const defaultState = {
   step: 0,
-  playlist: {}
+  playlist: {},
+  createdPlaylistId: ""
 };
 
 export const state = () => defaultState;
@@ -23,11 +24,17 @@ export const mutations = {
   incrementStep(state, step) {
     state.step++;
   },
+  setCreatedPlaylistId(state, id) {
+    state.createdPlaylistId = id;
+  },
   setPlaylist(state, playlist) {
     state.playlist = playlist;
   }
 };
 export const actions = {
+  async storeCreatedPlaylistId(context, payload) {
+    context.commit("setCreatedPlaylistId", payload);
+  },
   async storePlaylist(context, payload) {
     context.commit("setPlaylist", payload);
   }

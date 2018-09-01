@@ -2,7 +2,6 @@
     <div class="container">
       <div class="full-height">
         <div class="row  align-items-top">
-            <b-button @click="updatePointer(-1)">Previous</b-button>
             <div class="col">
                 <div class="row">
                     <div class="col">
@@ -34,25 +33,63 @@
                                         :src=get_youtube_video_source(result.videoId)
                                         allowfullscreen
                                 ></b-embed>
-                                <b-button block>Choose</b-button>
+                                <b-button @click="chooseResult(result)" block>Choose</b-button>
                             </b-col>
                         </b-row>
                     </b-col>
                 </b-row>
                 <b-row>
                     <b-col>
-                        <b-progress :value="this.resultPointer" :max="this.totalResults" class="mb-3"></b-progress>
+                        <hr>
+                    </b-col>
+                </b-row>
+                <b-row class="control-row">
+                    <b-col>
+                        <b-row>
+                            <b-col>
+                                <b-button :disabled="!this.resultPointer" block @click="updatePointer(-1)">prev</b-button>
+                            </b-col>
+                            <b-col cols="8">
+                                <b-progress height="100%" :max="this.totalResults">
+                                    <b-progress-bar :value="this.resultPointer+1" show-value :label="progressLabel">
+                                    </b-progress-bar>
+                                </b-progress>
+                            </b-col>
+                            <b-col>
+                                <b-button :disabled="this.resultPointer+1 == this.totalResults" block @click="updatePointer(1)">next</b-button>
+                            </b-col>
+                        </b-row>
+                        <b-row v-if="this.resultPointer+1 == this.totalResults">
+                            <b-col class="align-right">
+                                <h2 class="text-right">All done?</h2>
+
+                                <ConditionalBlock
+                                        :condition="hasChosenAll"
+                                >
+                                    <div slot="true">
+                                        <p class="text-right">Feel free to go back and change your choices.</p>
+                                    </div>
+                                    <div slot="false">
+                                        <p class="text-right">You haven't chosen every song yet, you can go back and select it.</p>
+                                    </div>
+                                </ConditionalBlock>
+
+                                <b-button :disabled="hasChosen" @click="initiateTransfer" class="float-right">Transfer my Playlist</b-button>
+                            </b-col>
+                        </b-row>
                     </b-col>
                 </b-row>
 
             </div>
-            <b-button @click="updatePointer(1)">Next</b-button>
         </div>
         </div>
     </div>
 </template>
 
 <script>
+    import Vue from 'vue';
+    import ConditionalBlock from "~/components/ConditionalBlock.vue";
+
 export default {
   mounted() {
     this.makeSearch();
@@ -96,6 +133,15 @@ export default {
           }
 
           this.resultPointer = updatedPointer;
+      },
+      chooseResult(result) {
+          Vue.set(this.chosenResults, this.resultPointer, result);
+      },
+      async initiateTransfer() {
+          this.$store.dispatch('core/storeSongs', this.chosenResults);
+          await this.$store.commit("core/incrementStep");
+          const redirectUrl = this.$store.getters["core/stepUrl"];
+          this.$router.push({ path: redirectUrl });
       }
   },
   computed: {
@@ -105,6 +151,15 @@ export default {
     currentItem() {
         return this.searchResults[this.resultPointer].results;
     },
+      progressLabel() {
+        return `${this.resultPointer+1} / ${this.totalResults}`
+      },
+      hasChosen() {
+          return !this.chosenResults.length;
+      },
+      hasChosenAll() {
+          return (this.chosenResults.filter(result => !!result).length === this.totalResults);
+      }
   },
   middleware: "authenticated",
   data() {
@@ -114,9 +169,15 @@ export default {
       resultPointer: 0,
       totalResults: 0
     };
-  }
+  },
+    components: {
+        ConditionalBlock
+    }
 };
 </script>
 
-<style>
+<style lang="scss">
+    hr {
+        border-top: 2px solid white;
+    }
 </style>

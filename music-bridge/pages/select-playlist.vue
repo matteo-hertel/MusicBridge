@@ -57,7 +57,6 @@ export default {
       this.$store.dispatch("core/storePlaylist", this.selectedPlaylist);
       await this.$store.commit("core/incrementStep");
       const redirectUrl = this.$store.getters["core/stepUrl"];
-      console.log(redirectUrl);
       this.$router.push({ path: redirectUrl });
     },
     selectPlaylist(id) {

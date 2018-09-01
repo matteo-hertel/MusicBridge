@@ -27,7 +27,7 @@
                           </b-row>
                           <b-row>
                               <b-col>Tracks: </b-col>
-                              <b-col>{{playlist.tracks.length}}</b-col>
+                              <b-col>{{transferableSongs.length}}</b-col>
                           </b-row>
                       </b-container>
 
@@ -42,7 +42,7 @@
                               <b-col v-if="playlistId">
                                 <b-button @click="updatePlaylist">Hydrate Your Playlist</b-button>
 
-{{completed}} / {{this.$store.state.core.songs.length}}
+{{completed}} / {{this.transferableSongs.length}}
                               </b-col>
                           </b-row>
                       </b-container>
@@ -94,7 +94,8 @@ export default {
       });
     },
     async updatePlaylist() {
-      for (const { videoId, title } of this.$store.state.core.songs) {
+      for (const { videoId, title } of this.transferableSongs) {
+        if (!videoId) continue;
         try {
           await this.addToPlaylist(this.playlistId, videoId);
           this.completed = ++this.completed;
@@ -117,6 +118,9 @@ export default {
     },
     playlist() {
       return this.$store.state.core.playlist || {};
+    },
+    transferableSongs() {
+      return this.$store.state.core.songs.filter(song => song);
     }
   },
   middleware: "authenticated",

@@ -39,6 +39,11 @@
                               <b-col v-if="playlistId">
                                 <b-button :href="playlistUrl">View Your Playlist</b-button>
                               </b-col>
+                              <b-col v-if="playlistId">
+                                <b-button @click="updatePlaylist">Hydrate Your Playlist</b-button>
+
+{{completed}} / {{this.$store.state.core.songs.length}}
+                              </b-col>
                           </b-row>
                       </b-container>
                     </div>
@@ -75,40 +80,33 @@ export default {
             "An error occurred while creating the youtube playlist, most likely API rating limit 😞"
           );
         });
+    },
+
+    async addToPlaylist(playlistId, videoId) {
+      return this.$apollo.query({
+        query: require("~/graphql/AddToPlaylist.gql"),
+        fetchPolicy: "network-only",
+        variables: {
+          playlistId,
+          videoId,
+          accessToken: this.$store.state.youtube.accessToken
+        }
+      });
+    },
+    async updatePlaylist() {
+      for (const { videoId, title } of this.$store.state.core.songs) {
+        try {
+          await this.addToPlaylist(this.playlistId, videoId);
+          this.completed = ++this.completed;
+        } catch (exc) {
+          console.log(exc);
+          return this.$store.dispatch(
+            "setGlobalError",
+            `An error occurred while adding the song "${title}"`
+          );
+        }
+      }
     }
-    // const addToPlaylist = (playlistId, videoId) => {
-    //   return this.$apollo.query({
-    //     query: require("~/graphql/AddToPlaylist.gql"),
-    //     fetchPolicy: "network-only",
-    //     variables: {
-    //       playlistId,
-    //       videoId,
-    //       accessToken: this.$store.state.youtube.accessToken
-    //     }
-    //   });
-    // };
-    // try {
-    //   const playlist = await createPlaylist(
-    //     this.playlists[this.selectedPlaylist]
-    //   );
-    //   for (const { videoId, title } of this.chosenSongs) {
-    //     try {
-    //       await addToPlaylist(playlist.id, videoId);
-    //       this.completed = ++this.completed;
-    //     } catch (exc) {
-    //       return this.$store.dispatch(
-    //         "setGlobalError",
-    //         `An error occurred while adding the song "${title}"`
-    //       );
-    //     }
-    //   }
-    // } catch (exc) {
-    //   return this.$store.dispatch(
-    //     "setGlobalError",
-    //     "An error occurred while creating the youtube playlist, most likely API rating limit 😞"
-    //   );
-    // }
-    //},
   },
   computed: {
     playlistUrl() {

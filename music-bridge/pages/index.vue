@@ -23,7 +23,9 @@
 </template>
 
 <script>
+  import CompactDisk from "~/components/CompactDisk.vue";
+
 export default {
-  components: {}
+  components: { CompactDisk }
 };
 </script>

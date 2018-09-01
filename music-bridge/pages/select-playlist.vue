@@ -21,7 +21,7 @@
                                   </template>
                             </b-form-select>
 
-                            <div v-if="selected">
+                            <div v-if="selected !== false">
                              <b-list-group>
                               <b-list-group-item v-for="(song, index) in computedSongs" v-bind:key="index">
                                 {{ song.artist}} - {{song.name}}
@@ -30,7 +30,6 @@
                               </b-list-group>
                               <b-button @click="commitSongs">Loooks good, next step</b-button>
                             </div>
-
                     </div>
                 </div>
             </div>

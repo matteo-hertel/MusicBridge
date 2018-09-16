@@ -1,57 +1,54 @@
 <template>
-    <div class="container">
+    <b-container>
       <div class="full-height">
-        <div class="row  align-items-top">
-            <div class="col">
-                <div class="row">
-                    <div class="col">
+          <b-row class="align-items-top">
+              <b-col>
+                <b-row>
+                    <b-col>
                         <h1 class="text-center">You're all set!</h1>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <p class="text-center lead">Review the info display down below, we're ready to create the playlist!!</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                      <b-container >
-                          <p class="lead">Playlist Info</p>
-                          <b-row>
-                              <b-col>Name: </b-col>
-                              <b-col>{{playlist.name}}</b-col>
-                          </b-row>
-                          <b-row>
-                              <b-col>Public: </b-col>
-                              <b-col>{{playlist.public}}</b-col>
-                          </b-row>
-                          <b-row>
-                              <b-col>Tracks: </b-col>
-                              <b-col>{{transferableSongs.length}}</b-col>
-                          </b-row>
-                      </b-container>
+                    </b-col>
+                </b-row>
+                <b-row>
+                    <b-col>
+                        <p class="text-center lead">Use the controls below to create your playlist and transfer your selected songs.</p>
+                    </b-col>
+                </b-row>
+                <b-row>
+                    <b-col>
+                      <p class="lead">Playlist Info</p>
+                      <b-row>
+                          <b-col>
+                              <p><strong>Name:</strong> {{ playlist.name }}</p>
+                          </b-col>
+                      </b-row>
+                        <b-row>
+                            <b-col>
+                                <p><strong>Number of tracks:</strong> {{ transferableSongs.length }}</p>
+                            </b-col>
+                        </b-row>
+                    </b-col>
+                </b-row>
+                  <b-row>
+                      <b-col>
+                          <b-button v-if="!playlistId" @click="createPlaylist">Create Playlist</b-button>
+                      </b-col>
+                      <b-col v-if="playlistId">
+                              <b-button @click="updatePlaylist">Transfer Your Songs</b-button>
+                      </b-col>
+                  </b-row>
+                  <b-row>
+                      <b-col>
+                          <b-progress v-if="playlistId" height="100%" :max="this.transferableSongs.length">
+                              <b-progress-bar :value="completed" show-value :label="progressLabel">
+                              </b-progress-bar>
+                          </b-progress>
+                      </b-col>
+                  </b-row>
+              </b-col>
 
-                      <b-container>
-                          <b-row>
-                              <b-col>
-                                   <b-button @click="createPlaylist">Create Playlist</b-button>
-                              </b-col>
-                              <b-col v-if="playlistId">
-                                <b-button :href="playlistUrl">View Your Playlist</b-button>
-                              </b-col>
-                              <b-col v-if="playlistId">
-                                <b-button @click="updatePlaylist">Hydrate Your Playlist</b-button>
-
-{{completed}} / {{this.transferableSongs.length}}
-                              </b-col>
-                          </b-row>
-                      </b-container>
-                    </div>
-                </div>
-            </div>
+          </b-row>
         </div>
-        </div>
-    </div>
+    </b-container>
 </template>
 
 <script>
@@ -107,6 +104,9 @@ export default {
           );
         }
       }
+    await this.$store.commit("core/incrementStep");
+    const redirectUrl = this.$store.getters["core/stepUrl"];
+    this.$router.push({ path: redirectUrl });
     }
   },
   computed: {
@@ -121,7 +121,10 @@ export default {
     },
     transferableSongs() {
       return this.$store.state.core.songs.filter(song => song);
-    }
+    },
+    progressLabel() {
+      return `${this.completed} / ${this.transferableSongs.length}`
+    },
   },
   middleware: "authenticated",
   data() {

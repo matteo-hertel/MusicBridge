@@ -1,39 +1,39 @@
 <template>
-    <div class="container">
+    <b-container>
       <div class="full-height">
-        <div class="row  align-items-top">
-            <div class="col">
-                <div class="row">
-                    <div class="col">
+          <b-row class="align-items-top">
+              <b-col>
+                  <b-row>
+                      <b-col>
                         <h1 class="text-center">Select the best matches</h1>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
+                      </b-col>
+                  </b-row>
+                  <b-row>
+                      <b-col>
                         <p class="text-center lead">We'll show 5 alternatives for each song, choose the best one!</p>
-                    </div>
-                </div>
+                      </b-col>
+                  </b-row>
                 <b-row v-if='!searchResults.length'>
                     <b-col>
                         <p class='lead text-center'>Finding your best matches, maybe we should start a dating app 🤔</p>
                     </b-col>
                 </b-row>
-                <b-row v-if='searchResults.length'>
-                    <b-col>
+                <b-row v-if='searchResults.length' class="row-eq-height" align-h="center">
+                    <b-col :class="{ selecteditem: isVideoSelected(result.videoId), videoitem: true }" sm="4" md v-for="(result, index) in currentItem" v-bind:key="index">
                         <b-row>
-                            <b-col v-for="(result, index) in currentItem" v-bind:key="index">
+                            <b-col>
                                 <p>{{ result.title }}</p>
                             </b-col>
                         </b-row>
                         <b-row>
-                            <b-col v-for="(result, index) in currentItem" v-bind:key="index">
+                            <b-col class="video-result">
                                 <b-embed
                                         type="iframe"
                                         aspect="16by9"
                                         :src=get_youtube_video_source(result.videoId)
                                         allowfullscreen
                                 ></b-embed>
-                                <b-button @click="chooseResult(result)" block>Choose</b-button>
+                                <b-button class="choose-button" @click="chooseResult(result)" block>Choose</b-button>
                             </b-col>
                         </b-row>
                     </b-col>
@@ -79,11 +79,10 @@
                         </b-row>
                     </b-col>
                 </b-row>
-
-            </div>
+              </b-col>
+          </b-row>
         </div>
-        </div>
-    </div>
+    </b-container>
 </template>
 
 <script>
@@ -95,6 +94,12 @@ export default {
     this.makeSearch();
   },
   methods: {
+      isVideoSelected(videoId) {
+          return this.chosenResults.filter((chosenResult) => {
+              return chosenResult.videoId == videoId;
+          }).length > 0;
+      },
+
       get_youtube_video_source(videoId) {
           return 'https://www.youtube.com/embed/' + videoId + '?rel=0'
       },
@@ -179,5 +184,20 @@ export default {
 <style lang="scss">
     hr {
         border-top: 2px solid white;
+    }
+    .video-result {
+        margin-top: 20px;
+    }
+    .videoitem {
+        border-radius: 10px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .selecteditem {
+        transition: background-color 0.3s ease;
+        background-color: rgba(255, 255, 255, 0.3);
+    }
+    .choose-button {
+        margin-top: 10px;
     }
 </style>

@@ -1,7 +1,8 @@
 const stepMapping = {
   0: "/select-playlist",
   1: "/select-best-match",
-  2: "/transfer-playlist"
+  2: "/transfer-playlist",
+  3: "/finish"
 };
 
 const defaultState = {
@@ -33,6 +34,11 @@ export const mutations = {
   },
   setPlaylist(state, playlist) {
     state.playlist = playlist;
+  },
+  wipeState(state) {
+    Object.keys(state).map(k => {
+      state[k] = defaultState[k];
+    });
   }
 };
 export const actions = {

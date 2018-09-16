@@ -30,7 +30,7 @@
                 </b-row>
                   <b-row>
                       <b-col>
-                          <b-button @click="createPlaylist">Create Playlist</b-button>
+                          <b-button v-if="!playlistId" @click="createPlaylist">Create Playlist</b-button>
                       </b-col>
                       <b-col v-if="playlistId">
                               <b-button @click="updatePlaylist">Transfer Your Songs</b-button>
@@ -38,7 +38,7 @@
                   </b-row>
                   <b-row>
                       <b-col>
-                          <b-progress height="100%" :max="this.transferableSongs.length">
+                          <b-progress v-if="playlistId" height="100%" :max="this.transferableSongs.length">
                               <b-progress-bar :value="completed" show-value :label="progressLabel">
                               </b-progress-bar>
                           </b-progress>
@@ -104,6 +104,9 @@ export default {
           );
         }
       }
+    await this.$store.commit("core/incrementStep");
+    const redirectUrl = this.$store.getters["core/stepUrl"];
+    this.$router.push({ path: redirectUrl });
     }
   },
   computed: {

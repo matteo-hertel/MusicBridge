@@ -22,6 +22,6 @@
     "graphql": "^0.13.2",
     "graphql-tools": "^4.0.5",
     "moment": "^2.24.0",
-    "mongoose": "^5.7.3"
+    "mongoose": "^5.7.6"
   }
 }

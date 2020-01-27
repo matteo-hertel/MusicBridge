@@ -19,7 +19,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-graphql": "^0.8.0",
-    "graphql": "^0.13.2",
+    "graphql": "^14.6.0",
     "graphql-tools": "^4.0.5",
     "moment": "^2.24.0",
     "mongoose": "^5.7.3"

@@ -19,7 +19,7 @@
     "vuex-persistedstate": "^2.5.4"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.3",
+    "babel-eslint": "^10.1.0",
     "eslint": "^4.15.0",
     "eslint-friendly-formatter": "^4.0.1",
     "eslint-loader": "^1.7.1",

@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@nuxtjs/apollo": "^4.0.0-rc14",
-    "bootstrap-vue": "^2.0.2",
+    "bootstrap-vue": "^2.6.0",
     "nuxt": "^2.9.2",
     "vuex-persistedstate": "^2.5.4"
   },
